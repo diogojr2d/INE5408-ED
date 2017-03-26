@@ -93,7 +93,7 @@ class ArrayList {
  /**
   * Insere novo elemento no final da Lista.
   * 
-  * @throws "std::out_of_range" caso a Lista esteja cheia.
+  * @throws "std::out_of_range" caso a lista esteja cheia.
   *
   * @param  data    dado do tipo T a ser inserido.
  */
@@ -109,7 +109,7 @@ class ArrayList {
  /**
   * Insere novo elemento no início da Lista.
   * 
-  * @throws "std::out_of_range" caso a Lista esteja cheia.
+  * @throws "std::out_of_range" caso a lista esteja cheia.
   *
   * @param  data    dado do tipo T a ser inserido.
  */
@@ -120,9 +120,15 @@ class ArrayList {
  /**
   * Insere novo elemento em posição definida pelo usuário.
   * 
-  * @throws "std::out_of_range" caso a Lista esteja cheia.
+  * Move uma posição para trás todos os elementos que estiverem
+  * após a posição definida, e insere o novo elemento nesta
+  * posição que foi liberada.
+  * 
+  * @throws "std::out_of_range" caso a lista esteja cheia
+  *             ou a posição seja inválida.
   *
   * @param  data    dado do tipo T a ser inserido.
+  * @param  index   (inteiro) indica a posição a ser inserido o dado.
  */
     void ArrayList<T>::insert(const T& data, std::size_t index) {
         if (full()) {
@@ -139,9 +145,18 @@ class ArrayList {
         }
     }
 
+    >>> PAREI AQUI PAREI AQUI PAREI AQUI <<<
+    >>> PAREI AQUI PAREI AQUI PAREI AQUI <<<
+    >>> PAREI AQUI PAREI AQUI PAREI AQUI <<<
+    >>> PAREI AQUI PAREI AQUI PAREI AQUI <<<
+    >>> PAREI AQUI PAREI AQUI PAREI AQUI <<<
+    >>> PAREI AQUI PAREI AQUI PAREI AQUI <<<
+
  /**
-  * Insere novo elemento em posição definida pelo usuário.
+  * Insere novo elemento de acordo com a ordem da lista (ordenada).
+  *
   * 
+  *
   * @throws "std::out_of_range" caso a Lista esteja cheia.
   *
   * @param  data    dado do tipo T a ser inserido.
@@ -240,7 +255,7 @@ class ArrayList {
   * 
   * @return Inteiro com o número de elementos da Lista.
  */
-    std::size_t size() {
+    std::size_t size() {out_of_range
         return size_;
     }
 
