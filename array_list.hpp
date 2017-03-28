@@ -21,7 +21,7 @@ template<typename T>
 class ArrayList {
  public:
     ArrayList();
-    explict ArrayList(std::size_t max_size);
+    explicit ArrayList(std::size_t max_size);
     ~ArrayList();
 
     void clear();
@@ -75,6 +75,7 @@ class ArrayList {
   *
   * @see ArrayList()
  */
+    template<typename T>
     ArrayList<T>::ArrayList(std::size_t max) {
         max_size_ = max;
         contents = new T[max_size_];
@@ -86,6 +87,7 @@ class ArrayList {
   * 
   * Deleta o objeto e desaloca memória dos elementos.
  */
+    template<typename T>
     ArrayList<T>::~ArrayList() {
         delete [] contents;
     }
@@ -97,6 +99,7 @@ class ArrayList {
   *
   * @param  data    dado do tipo T a ser inserido.
  */
+    template<typename T>
     void ArrayList<T>::push_back(const T& data) {
         if (full()) {
             throw std::out_of_range("Lista cheia");
@@ -113,10 +116,11 @@ class ArrayList {
   *
   * @param  data    dado do tipo T a ser inserido.
  */
+    template<typename T>
     void ArrayList<T>::push_front(const T& data) {
         insert(data, 0);
     }
- 
+
  /**
   * Insere novo elemento em posição definida pelo usuário.
   * 
@@ -130,12 +134,13 @@ class ArrayList {
   * @param  data    dado do tipo T a ser inserido.
   * @param  index   (inteiro) indica a posição a ser inserido o dado.
  */
+    template<typename T>
     void ArrayList<T>::insert(const T& data, std::size_t index) {
         if (full()) {
             throw std::out_of_range("Lista cheia");
         } else {
             if (index > size_ || index < 0) {
-                throw std::out_of_range("Posição inválida")
+                throw std::out_of_range("Posição inválida");
             }
             for (auto i = size_; i > index; --i) {
                 contents[i] = contents[i-1];
@@ -144,13 +149,6 @@ class ArrayList {
             size_++;
         }
     }
-
-    >>> PAREI AQUI PAREI AQUI PAREI AQUI <<<
-    >>> PAREI AQUI PAREI AQUI PAREI AQUI <<<
-    >>> PAREI AQUI PAREI AQUI PAREI AQUI <<<
-    >>> PAREI AQUI PAREI AQUI PAREI AQUI <<<
-    >>> PAREI AQUI PAREI AQUI PAREI AQUI <<<
-    >>> PAREI AQUI PAREI AQUI PAREI AQUI <<<
 
  /**
   * Insere novo elemento de acordo com a ordem da lista (ordenada).
@@ -161,6 +159,7 @@ class ArrayList {
   *
   * @param  data    dado do tipo T a ser inserido.
  */
+    template<typename T>
     void ArrayList<T>::insert_sorted(const T& data) {
         if (full()) {
             throw std::out_of_range("Lista cheia");
@@ -183,12 +182,13 @@ class ArrayList {
   *
   * @return Elemento que estava na primeira posição da Lista.
  */
+    template<typename T>
     T ArrayList<T>::pop(std::size_t index) {
         if (empty()) {
             throw std::out_of_range("Lista vazia");
         } else {
             if (index >= size_ || index < 0) {
-                throw std::out_of_range("Posição inválida")
+                throw std::out_of_range("Posição inválida");
             }
             T requested = contents[index];
             for (auto i = index; i < (size_-1); ++i) {
@@ -209,6 +209,7 @@ class ArrayList {
   *
   * @return Elemento que estava na primeira posição da Lista.
  */
+    template<typename T>
     T ArrayList<T>::pop_back() {
         return pop(size_-1);
     }
@@ -223,6 +224,7 @@ class ArrayList {
   *
   * @return Elemento que estava na primeira posição da Lista.
  */
+    template<typename T>
     T ArrayList<T>::pop_front() {
         return pop(0);
     }
@@ -234,19 +236,37 @@ class ArrayList {
   *
   * @return Elemento que está no final da Lista.
  */
-    T& back() {
+    template<typename T>
+    void ArrayList<T>::remove(const T& data) {
         if (empty()) {
             throw std::out_of_range("Lista vazia");
         } else {
-            return (contents[size_-1]);
+            pop(find(data));
         }
+    }
+
+ /**
+  * Olha o elemento no final da Lista, sem retirá-lo.
+  * 
+  * @throws "std::out_of_range" caso a Lista esteja vazia.
+  *
+  * @return Elemento que está no final da Lista.
+ */
+    template<typename T>
+    std::size_t ArrayList<T>::find(const T& data) const {
+        auto index = 0u;
+        while ( (index < size_) && (data != contents[index]) ) {
+            index++;
+        }
+        return index;
     }
 
  /**
   * Limpa os dados da Lista.
   * 
  */
-    void clear() {
+    template<typename T>
+    void ArrayList<T>::clear() {
         size_ = 0u;
     }
 
@@ -255,7 +275,8 @@ class ArrayList {
   * 
   * @return Inteiro com o número de elementos da Lista.
  */
-    std::size_t size() {out_of_range
+    template<typename T>
+    std::size_t ArrayList<T>::size() const {
         return size_;
     }
 
@@ -264,7 +285,8 @@ class ArrayList {
   * 
   * @return Inteiro com o tamanho máximo da Lista.
  */
-    std::size_t max_size() {
+    template<typename T>
+    std::size_t ArrayList<T>::max_size() const {
         return max_size_;
     }
 
@@ -273,7 +295,8 @@ class ArrayList {
   * 
   * @return True se a Lista estiver vazia, False caso contrário.
  */
-    bool empty() {
+    template<typename T>
+    bool ArrayList<T>::empty() const {
         return (size_ == 0);
     }
 
@@ -282,10 +305,76 @@ class ArrayList {
   * 
   * @return True se a Lista estiver cheia, False caso contrário.
  */
-    bool ArrayList<T>::full() {
+    template<typename T>
+    bool ArrayList<T>::full() const {
         return (size_ == max_size_);
     }
 
+ /**
+  * Verifica se a Lista está cheia.
+  * 
+  * @return True se a Lista estiver cheia, False caso contrário.
+ */
+    template<typename T>
+    bool ArrayList<T>::contains(const T& data) const {
+        return (find(data) >= 0 && find(data) < size_);
+    }
+
+ /**
+  * Verifica se a Lista está cheia.
+  * 
+  * @return True se a Lista estiver cheia, False caso contrário.
+ */
+    template<typename T>
+    T& ArrayList<T>::at(std::size_t index) {
+        if (index >= size_) {
+            throw std::out_of_range("Posição inválida");
+        } else {
+            return contents[index];
+        }
+    }
+
+ /**
+  * Verifica se a Lista está cheia.
+  * 
+  * @return True se a Lista estiver cheia, False caso contrário.
+ */
+    template<typename T>
+    T& ArrayList<T>::operator[](std::size_t index) {
+        if (index >= size_) {
+            throw std::out_of_range("Posição inválida");
+        } else {
+            return contents[index];
+        }
+    }
+
+ /**
+  * Verifica se a Lista está cheia.
+  * 
+  * @return True se a Lista estiver cheia, False caso contrário.
+ */
+    template<typename T>
+    const T& ArrayList<T>::at(std::size_t index) const {
+        if (index >= size_) {
+            throw std::out_of_range("Posição inválida");
+        } else {
+            return contents[index];
+        }
+    }
+
+ /**
+  * Verifica se a Lista está cheia.
+  * 
+  * @return True se a Lista estiver cheia, False caso contrário.
+ */
+    template<typename T>
+    const T& ArrayList<T>::operator[](std::size_t index) const {
+        if (index >= size_) {
+            throw std::out_of_range("Posição inválida");
+        } else {
+            return contents[index];
+        }
+    }
 
 }  // namespace structures
 
