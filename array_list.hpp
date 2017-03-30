@@ -11,9 +11,9 @@ namespace structures {
 /**
  *	Estrutura de dados do tipo Lista.
  *
- *	Organiza os elementos no padrão FIFO (First In First Out),
- *	onde o primeiro elemento a ser inserido é o primeiro a ser retirado.
- *	Conforme a definição geralmente conhecida de "Lista".
+ *	Organiza os elementos em uma lista que pode ser ordenada ou não,
+ *	permitindo que o usuário insira e retire elementos em qualquer posição
+ *  desejada.
  *
  * @tparam	T	Tipo de dado do template.
 */
@@ -151,9 +151,8 @@ class ArrayList {
     }
 
  /**
-  * Insere novo elemento de acordo com a ordem da lista (ordenada).
-  *
-  * 
+  * Insere novo elemento de acordo com a ordem natural dos elementos
+  * da lista (ordenada).
   *
   * @throws "std::out_of_range" caso a Lista esteja cheia.
   *
@@ -173,14 +172,16 @@ class ArrayList {
     }
 
  /**
-  * Retira o primeiro elemento do início da Lista.
+  * Retira o elemento da posição definida por index.
   * 
-  * Retira o primeiro elemento e realoca todos os outros elementos
-  * uma posição a frente.
+  * Retira e retorna o elemento da posição dada por index
+  * e realoca todos os outros elementos uma posição a frente.
   *
   * @throws "std::out_of_range" caso a Lista esteja vazia.
   *
-  * @return Elemento que estava na primeira posição da Lista.
+  * @param  index   (inteiro) indica a posição do dado.
+  *
+  * @return Elemento que estava na posição index.
  */
     template<typename T>
     T ArrayList<T>::pop(std::size_t index) {
@@ -200,14 +201,13 @@ class ArrayList {
     }
 
  /**
-  * Retira o primeiro elemento do início da Lista.
+  * Retira o último elemento da Lista.
   * 
-  * Retira o primeiro elemento e realoca todos os outros elementos
-  * uma posição a frente.
+  * Retira e retorna o último elemento.
   *
   * @throws "std::out_of_range" caso a Lista esteja vazia.
   *
-  * @return Elemento que estava na primeira posição da Lista.
+  * @return Elemento que estava na última posição da Lista.
  */
     template<typename T>
     T ArrayList<T>::pop_back() {
@@ -215,7 +215,7 @@ class ArrayList {
     }
 
  /**
-  * Retira o primeiro elemento do início da Lista.
+  * Retira o primeiro elemento da Lista.
   * 
   * Retira o primeiro elemento e realoca todos os outros elementos
   * uma posição a frente.
@@ -230,11 +230,11 @@ class ArrayList {
     }
 
  /**
-  * Olha o elemento no final da Lista, sem retirá-lo.
+  * Remove o elemento definido pelo dado passado como argumento.
   * 
   * @throws "std::out_of_range" caso a Lista esteja vazia.
   *
-  * @return Elemento que está no final da Lista.
+  * @param  data    dado do tipo T a ser removido.
  */
     template<typename T>
     void ArrayList<T>::remove(const T& data) {
@@ -246,11 +246,13 @@ class ArrayList {
     }
 
  /**
-  * Olha o elemento no final da Lista, sem retirá-lo.
+  * Procura e retorna a posição do elemento (data) na lista.
   * 
   * @throws "std::out_of_range" caso a Lista esteja vazia.
   *
-  * @return Elemento que está no final da Lista.
+  * @param  data    dado do tipo T a ser procurado.
+  *
+  * @return inteiro com a posição do dado.
  */
     template<typename T>
     std::size_t ArrayList<T>::find(const T& data) const {
@@ -311,9 +313,11 @@ class ArrayList {
     }
 
  /**
-  * Verifica se a Lista está cheia.
+  * Verifica se a Lista contém o dado passado (data).
   * 
-  * @return True se a Lista estiver cheia, False caso contrário.
+  * @param  data    dado do tipo T a ser procurado.
+  * 
+  * @return True se a lista contém o dado, False caso contrário.
  */
     template<typename T>
     bool ArrayList<T>::contains(const T& data) const {
@@ -321,9 +325,11 @@ class ArrayList {
     }
 
  /**
-  * Verifica se a Lista está cheia.
+  * Retorna o dado da posição recebida.
   * 
-  * @return True se a Lista estiver cheia, False caso contrário.
+  * @param  index   (inteiro) indica a posição do dado.
+  *
+  * @return dado do tipo T da posição.
  */
     template<typename T>
     T& ArrayList<T>::at(std::size_t index) {
@@ -335,9 +341,15 @@ class ArrayList {
     }
 
  /**
-  * Verifica se a Lista está cheia.
+  * Sobrescreve o operador [], retornando o dado da posição recebida.
   * 
-  * @return True se a Lista estiver cheia, False caso contrário.
+  * Sobrescreve o operador [], para que a ArrayList funcione de maneira
+  * similar a uma array, onde os dados da lista podem ser acessados
+  * pelo seu índice na forma ArrayList[index].
+  * 
+  * @param  index   (inteiro) indica a posição do dado.
+  *
+  * @return dado do tipo T da posição indicada.
  */
     template<typename T>
     T& ArrayList<T>::operator[](std::size_t index) {
@@ -349,9 +361,13 @@ class ArrayList {
     }
 
  /**
-  * Verifica se a Lista está cheia.
+  * Versão const do at().
   * 
-  * @return True se a Lista estiver cheia, False caso contrário.
+  * @param  index   (inteiro) indica a posição do dado.
+  *
+  * @return dado do tipo T da posição indicada.
+  * 
+  * @see ArrayList<T>::at(std::size_t index)
  */
     template<typename T>
     const T& ArrayList<T>::at(std::size_t index) const {
@@ -363,9 +379,13 @@ class ArrayList {
     }
 
  /**
-  * Verifica se a Lista está cheia.
+  * Versão const do operador [].
   * 
-  * @return True se a Lista estiver cheia, False caso contrário.
+  * @param  index   (inteiro) indica a posição do dado.
+  *
+  * @return dado do tipo T da posição indicada.
+  * 
+  * @see ArrayList<T>::operator[](std::size_t index)
  */
     template<typename T>
     const T& ArrayList<T>::operator[](std::size_t index) const {
