@@ -20,22 +20,150 @@ namespace structures {
 template<typename T>
 class LinkedList {
  public:
+ /**
+  * @brief Construtor padrão.
+  * 
+  * Cria um objeto da classe LinkedList.
+ */
     LinkedList();
+
+ /**
+  * @brief Destrutor da classe LinkedList.
+  * 
+  * Deleta o objeto e desaloca memória dos elementos.
+  *
+  * @see LinkedList()
+ */
     ~LinkedList();
 
+ /**
+  * @brief Limpa os dados da Lista.
+  * 
+  * Limpa a lista e desaloca memória de cada elemento.
+ */
     void clear();
+
+ /**
+  * @brief Insere novo elemento no final da Lista.
+  * 
+  * @param  data    dado do tipo T a ser inserido.
+  *
+  * @see void push_front(const T& data);
+ */
     void push_back(const T& data);
+ /**
+  * @brief Insere novo elemento no início da Lista.
+  * 
+  * @param  data    dado do tipo T a ser inserido.
+  *
+  * @see void push_back(const T& data);
+ */
     void push_front(const T& data);
+ /**
+  * @brief Insere novo elemento em posição definida pelo usuário.
+  * 
+  * Cria novo elemento com o dado passado, e o insere na posição definida,
+  * "empurrando" uma posição para trás todos os elementos após ele
+  * (inclusive o que estava na posição).
+  *
+  * @throws "std::out_of_range" caso a lista esteja cheia
+  *             ou a posição seja inválida.
+  *
+  * @param  data    dado do tipo T a ser inserido.
+  * @param  index   (inteiro) indica a posição a ser inserido o dado.
+  *
+  * @see void insert_sorted(const T& data);
+ */
     void insert(const T& data, std::size_t index);
+ /**
+  * @brief Insere elemento em lista de maneira ordenada.
+  *
+  * Considerando uma lista ordenada, por exemplo, inteiros em ordem crescente,
+  * insere novo elemento de acordo com a ordem natural dos elementos.
+  *
+  * @param  data    dado do tipo T a ser inserido.
+  *
+  * @see void insert(const T& data, std::size_t index);
+ */
     void insert_sorted(const T& data);
+ /**
+  * @brief Retira o elemento da posição definida.
+  * 
+  * Retira e retorna o elemento da posição dada por index
+  * e realoca todos os outros elementos uma posição a frente.
+  *
+  * @throws "std::out_of_range" caso a Lista esteja vazia
+  * 			ou a posição seja inválida.
+  *
+  * @param  index   (inteiro) indica a posição do dado.
+  *
+  * @return Elemento que estava na posição index.
+ */
     T pop(std::size_t index);
+ /**
+  * @brief Retira o último elemento da Lista.
+  * 
+  * Retira e retorna o último elemento da Lista.
+  *
+  * @throws "std::out_of_range" caso a Lista esteja vazia.
+  *
+  * @return Elemento que estava na última posição da Lista.
+ */
     T pop_back();
+ /**
+  * @brief Retira o primeiro elemento da Lista.
+  * 
+  * Retira o primeiro elemento e realoca todos os outros elementos
+  * uma posição a frente.
+  *
+  * @throws "std::out_of_range" caso a Lista esteja vazia.
+  *
+  * @return Elemento que estava na primeira posição da Lista.
+ */
     T pop_front();
+ /**
+  * Remove o elemento definido pelo dado passado como argumento.
+  * 
+  * @throws "std::out_of_range" caso a Lista esteja vazia.
+  *
+  * @param  data    dado do tipo T a ser removido.
+ */
     void remove(const T& data);
+ /**
+  * Verifica se a Lista está vazia.
+  * 
+  * @return True se a Lista estiver vazia, False caso contrário.
+ */
     bool empty() const;
+ /**
+  * Verifica se a Lista contém o dado passado (data).
+  * 
+  * @param  data    dado do tipo T a ser procurado.
+  * 
+  * @return True se a lista contém o dado, False caso contrário.
+ */
     bool contains(const T& data) const;
+ /**
+  * Procura e retorna a posição do elemento (data) na lista.
+  * 
+  * @param  data    dado do tipo T a ser procurado.
+  *
+  * @return inteiro com a posição do dado.
+ */
     std::size_t find(const T& data) const;
+ /**
+  * Verifica o tamanho atual da Lista.
+  * 
+  * @return Inteiro com o número de elementos da Lista.
+ */
     std::size_t size() const;
+ /**
+  * Retorna o dado da posição recebida.
+  * 
+  * @param  index   (inteiro) indica a posição do dado.
+  *
+  * @return dado do tipo T da posição.
+ */
     T& at(std::size_t index);
 
  private:
@@ -87,51 +215,29 @@ class LinkedList {
     std::size_t size_{0u};
 };
 
- /**
-  * Construtor padrão.
-  * 
-  * Cria um objeto da classe LinkedList com tamanho máximo padrão (DEFAULT_SIZE).
-  *
-  * @see LinkedList(std::size_t max)
- */
     template<typename T>
     LinkedList<T>::LinkedList():
         head{nullptr},
         size_{0u}
     {}
 
- /**
-  * Destrutor da classe LinkedList.
-  * 
-  * Deleta o objeto e desaloca memória dos elementos.
- */
     template<typename T>
     LinkedList<T>::~LinkedList() {
         clear();
     }
 
- /**
-  * Insere novo elemento no final da Lista.
-  * 
-  * @throws "std::out_of_range" caso a lista esteja cheia.
-  *
-  * @param  data    dado do tipo T a ser inserido.
- */
     template<typename T>
     void LinkedList<T>::push_back(const T& data) {
-        Node* last = end();
         Node* novo{new Node(data, nullptr)};
-        last->next(novo);
+        if (empty()) {
+    		head = novo;
+    	} else {
+    		Node* last = end();
+        	last->next(novo);
+    	}
         size_++;
     }
 
- /**
-  * Insere novo elemento no início da Lista.
-  * 
-  * @throws "std::out_of_range" caso a lista esteja cheia.
-  *
-  * @param  data    dado do tipo T a ser inserido.
- */
     template<typename T>
     void LinkedList<T>::push_front(const T& data) {
         Node* novo{new Node(data, head)};
@@ -142,19 +248,6 @@ class LinkedList {
         size_++;
     }
 
- /**
-  * Insere novo elemento em posição definida pelo usuário.
-  * 
-  * Move uma posição para trás todos os elementos que estiverem
-  * após a posição definida, e insere o novo elemento nesta
-  * posição que foi liberada.
-  * 
-  * @throws "std::out_of_range" caso a lista esteja cheia
-  *             ou a posição seja inválida.
-  *
-  * @param  data    dado do tipo T a ser inserido.
-  * @param  index   (inteiro) indica a posição a ser inserido o dado.
- */
     template<typename T>
     void LinkedList<T>::insert(const T& data, std::size_t index) {
         if (index > size()) {
@@ -176,14 +269,6 @@ class LinkedList {
         }
     }
 
- /**
-  * Insere novo elemento de acordo com a ordem natural dos elementos
-  * da lista (ordenada).
-  *
-  * @throws "std::out_of_range" caso a Lista esteja cheia.
-  *
-  * @param  data    dado do tipo T a ser inserido.
- */
     template<typename T>
     void LinkedList<T>::insert_sorted(const T& data) {
         if (empty()) {
@@ -203,18 +288,6 @@ class LinkedList {
         }
     }
 
- /**
-  * Retira o elemento da posição definida por index.
-  * 
-  * Retira e retorna o elemento da posição dada por index
-  * e realoca todos os outros elementos uma posição a frente.
-  *
-  * @throws "std::out_of_range" caso a Lista esteja vazia.
-  *
-  * @param  index   (inteiro) indica a posição do dado.
-  *
-  * @return Elemento que estava na posição index.
- */
     template<typename T>
     T LinkedList<T>::pop(std::size_t index) {
         if (empty()) {
@@ -238,30 +311,11 @@ class LinkedList {
         }
     }
 
- /**
-  * Retira o último elemento da Lista.
-  * 
-  * Retira e retorna o último elemento.
-  *
-  * @throws "std::out_of_range" caso a Lista esteja vazia.
-  *
-  * @return Elemento que estava na última posição da Lista.
- */
     template<typename T>
     T LinkedList<T>::pop_back() {
         return pop(size_-1);
     }
 
- /**
-  * Retira o primeiro elemento da Lista.
-  * 
-  * Retira o primeiro elemento e realoca todos os outros elementos
-  * uma posição a frente.
-  *
-  * @throws "std::out_of_range" caso a Lista esteja vazia.
-  *
-  * @return Elemento que estava na primeira posição da Lista.
- */
     template<typename T>
     T LinkedList<T>::pop_front() {
         if (empty()) {
@@ -275,13 +329,6 @@ class LinkedList {
         return requested;
     }
 
- /**
-  * Remove o elemento definido pelo dado passado como argumento.
-  * 
-  * @throws "std::out_of_range" caso a Lista esteja vazia.
-  *
-  * @param  data    dado do tipo T a ser removido.
- */
     template<typename T>
     void LinkedList<T>::remove(const T& data) {
         if (empty()) {
@@ -291,15 +338,6 @@ class LinkedList {
         	pop(find(data));
     }
 
- /**
-  * Procura e retorna a posição do elemento (data) na lista.
-  * 
-  * @throws "std::out_of_range" caso a Lista esteja vazia.
-  *
-  * @param  data    dado do tipo T a ser procurado.
-  *
-  * @return inteiro com a posição do dado.
- */
     template<typename T>
     std::size_t LinkedList<T>::find(const T& data) const {
         Node* anterior = head;
@@ -311,16 +349,9 @@ class LinkedList {
         return index;
     }
 
- /**
-  * Limpa os dados da Lista.
-  * 
- */
     template<typename T>
     void LinkedList<T>::clear() {
-        if (empty()) {
-            throw std::out_of_range("Lista vazia");
-        }
-        Node* anterior = nullptr;
+        Node* anterior = head;
         Node* atual = head;
         while (atual != nullptr) {
             anterior = atual;
@@ -331,45 +362,21 @@ class LinkedList {
         size_ = 0u;
     }
 
- /**
-  * Verifica o tamanho atual da Lista.
-  * 
-  * @return Inteiro com o número de elementos da Lista.
- */
     template<typename T>
     std::size_t LinkedList<T>::size() const {
         return size_;
     }
 
- /**
-  * Verifica se a Lista está vazia.
-  * 
-  * @return True se a Lista estiver vazia, False caso contrário.
- */
     template<typename T>
     bool LinkedList<T>::empty() const {
         return (size_ == 0);
     }
 
- /**
-  * Verifica se a Lista contém o dado passado (data).
-  * 
-  * @param  data    dado do tipo T a ser procurado.
-  * 
-  * @return True se a lista contém o dado, False caso contrário.
- */
     template<typename T>
     bool LinkedList<T>::contains(const T& data) const {
         return (find(data) >= 0 && find(data) < size_);
     }
 
- /**
-  * Retorna o dado da posição recebida.
-  * 
-  * @param  index   (inteiro) indica a posição do dado.
-  *
-  * @return dado do tipo T da posição.
- */
     template<typename T>
     T& LinkedList<T>::at(std::size_t index) {
         if (empty()) {
