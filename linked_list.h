@@ -287,7 +287,7 @@ class LinkedList {
         if (empty()) {
             throw std::out_of_range("Lista vazia");
         }
-        if (contains())
+        if (contains(data))
         	pop(find(data));
     }
 
