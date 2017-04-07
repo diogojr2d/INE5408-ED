@@ -120,9 +120,8 @@ class LinkedList {
     template<typename T>
     void LinkedList<T>::push_back(const T& data) {
         Node* last = end();
-        Node* novo{new Node(data)};
+        Node* novo{new Node(data, nullptr)};
         last->next(novo);
-        novo->next(nullptr);
         size_++;
     }
 
@@ -135,11 +134,10 @@ class LinkedList {
  */
     template<typename T>
     void LinkedList<T>::push_front(const T& data) {
-        Node* novo{new Node(data)};
+        Node* novo{new Node(data, head)};
         if (novo == nullptr) {
             throw std::out_of_range("Lista cheia");
         }
-        novo->next(head);
         head = novo;
         size_++;
     }
@@ -161,7 +159,7 @@ class LinkedList {
     void LinkedList<T>::insert(const T& data, std::size_t index) {
         if (index > size()) {
             throw std::out_of_range("Posição inválida");
-        } else if (index == 0) {
+        } else if (empty() || index == 0) {
             push_front(data);
         } else {
             Node* novo{new Node(data)};
@@ -289,7 +287,8 @@ class LinkedList {
         if (empty()) {
             throw std::out_of_range("Lista vazia");
         }
-        pop(find(data));
+        if (contains())
+        	pop(find(data));
     }
 
  /**
