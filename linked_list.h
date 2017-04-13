@@ -165,6 +165,16 @@ class LinkedList {
   * @return dado do tipo T da posição.
  */
     T& at(std::size_t index);
+/**
+  * Retorna o dado da posição recebida.
+  *
+  * Versão const de at().
+  * 
+  * @param  index   (inteiro) indica a posição do dado.
+  *
+  * @return dado do tipo T da posição.
+ */
+    const T& at(std::size_t index) const;
 
  private:
     class Node {  // Elemento
@@ -379,6 +389,24 @@ class LinkedList {
 
     template<typename T>
     T& LinkedList<T>::at(std::size_t index) {
+        if (empty()) {
+            throw std::out_of_range("Lista vazia");
+        }
+        if (index >= size_) {
+            throw std::out_of_range("Posição inválida");
+        } else if (index == 0) {
+            return head->data();
+        } else {
+            Node* atual = head;
+            for (auto i = 0u; i < index; ++i) {
+                atual = atual->next();
+            }
+            return atual->data();
+        }
+    }
+
+    template<typename T>
+    const T& LinkedList<T>::at(std::size_t index) const {
         if (empty()) {
             throw std::out_of_range("Lista vazia");
         }
