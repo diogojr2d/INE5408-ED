@@ -19,14 +19,14 @@ namespace structures {
  * @tparam  T   Tipo de dado do template.
 */
 template<typename T>
-class LinkedQueue: private LinkedList<T> {
+class LinkedQueue {
  public:
  /**
   * @brief Construtor padrão.
   * 
   * Cria um objeto da classe LinkedQueue.
  */
-    LinkedQueue(): LinkedList<T>(), tail{nullptr}
+    LinkedQueue(): linkedList_{}
     {}
 
  /**
@@ -36,9 +36,7 @@ class LinkedQueue: private LinkedList<T> {
   *
   * @see LinkedQueue()
  */
-    ~LinkedQueue() {
-        delete tail;
-    }
+    ~LinkedQueue() {}
 
  /**
   * @brief Limpa os dados da Fila.
@@ -46,8 +44,7 @@ class LinkedQueue: private LinkedList<T> {
   * Limpa a Fila e desaloca memória de cada elemento.
  */
     void clear() {
-        LinkedList<T>::clear();
-        tail = nullptr;
+        linkedList_.clear();
     }
 
  /**
@@ -58,15 +55,7 @@ class LinkedQueue: private LinkedList<T> {
   * @see void push_front(const T& data);
  */
     void enqueue(const T& data) {
-        Node* novo{new Node(data, nullptr)};
-        if (empty()) {
-            head = novo;
-            tail = novo;
-        } else {
-            tail->next(novo);
-            tail = novo;
-        }
-        size_++;
+    	linkedList_.push_back();
     }
 
  /**
@@ -83,7 +72,7 @@ class LinkedQueue: private LinkedList<T> {
   * @return Elemento que estava na posição index.
  */
     T dequeue() {
-        return LinkedList<T>::pop_front();
+        return linkedList_.pop_front();
     }
 
  /**
@@ -97,7 +86,7 @@ class LinkedQueue: private LinkedList<T> {
   * @return Elemento que estava na primeira posição da Fila.
  */
     T& front() const {
-        return LinkedList<T>::at(0);
+        return linkedList_.at(0);
     }
 
  /**
@@ -111,7 +100,7 @@ class LinkedQueue: private LinkedList<T> {
   * @return Elemento que estava na primeira posição da Fila.
  */
     T& back() const {
-        return LinkedList<T>::at(size()-1);
+        return linkedList_.at(size()-1);
     }
 
  /**
@@ -120,7 +109,7 @@ class LinkedQueue: private LinkedList<T> {
   * @return True se a Fila estiver vazia, False caso contrário.
  */
     bool empty() const {
-        return LinkedList<T>::empty();
+        return linkedList_.empty();
     }
 
  /**
@@ -129,11 +118,11 @@ class LinkedQueue: private LinkedList<T> {
   * @return Inteiro com o número de elementos da Fila.
  */
     std::size_t size() const {
-        return LinkedList<T>::size();
+        return linkedList_.size();
     }
 
  private:
-    Node* tail;
+    LinkedList linkedList_;
 };
 
 }  // namespace structures
