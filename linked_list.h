@@ -174,7 +174,7 @@ class LinkedList {
   *
   * @return dado do tipo T da posição.
  */
-    const T& at(std::size_t index) const;
+    T& at(std::size_t index) const;
 
  private:
     class Node {  // Elemento
@@ -406,7 +406,7 @@ class LinkedList {
     }
 
     template<typename T>
-    const T& LinkedList<T>::at(std::size_t index) const {
+    T& LinkedList<T>::at(std::size_t index) const {
         if (empty()) {
             throw std::out_of_range("Lista vazia");
         }
