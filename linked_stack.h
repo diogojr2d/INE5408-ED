@@ -48,42 +48,31 @@ class LinkedStack {
     }
 
  /**
-  * @brief Insere novo elemento no final da Pilha.
+  * @brief Insere novo elemento no topo da Pilha.
   * 
   * @param  data    dado do tipo T a ser inserido.
-  *
-  * @see void push_front(const T& data);
  */
     void push(const T& data) {
         linkedList_.push_front(data);
     }
 
  /**
-  * @brief Retira o elemento da posição definida.
+  * @brief Retira o elemento do topo da Pilha.
   * 
-  * Retira e retorna o elemento da posição dada por index
-  * e realoca todos os outros elementos uma posição a frente.
-  *
   * @throws "std::out_of_range" caso a Pilha esteja vazia
-  * 			ou a posição seja inválida.
   *
-  * @param  index   (inteiro) indica a posição do dado.
-  *
-  * @return Elemento que estava na posição index.
+  * @return Elemento que estava no topo da pilha.
  */
     T pop() {
         return linkedList_.pop_front();
     }
 
  /**
-  * @brief Retira o primeiro elemento da Pilha.
+  * Olha o elemento no topo da pilha, sem retirá-lo.
   * 
-  * Retira o primeiro elemento e realoca todos os outros elementos
-  * uma posição a frente.
+  * @throws "std::out_of_range" caso a pilha esteja vazia.
   *
-  * @throws "std::out_of_range" caso a Pilha esteja vazia.
-  *
-  * @return Elemento que estava na primeira posição da Pilha.
+  * @return Elemento que está no topo da pilha.
  */
     T& top() const {
         return linkedList_.at(0);

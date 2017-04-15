@@ -12,9 +12,8 @@ namespace structures {
 /**
  *  Estrutura de dados do tipo Fila Encadeada.
  *
- *  Organiza os elementos em uma Fila que pode ser ordenada ou não,
- *  permitindo que o usuário insira e retire elementos em qualquer posição
- *  desejada.
+ *  Organiza os elementos em uma Fila (FIFO) que pode ser ordenada ou não,
+ *  onde o primeiro elemento a ser inserido é o primeiro a ser retirado.
  *
  * @tparam  T   Tipo de dado do template.
 */
@@ -51,53 +50,42 @@ class LinkedQueue {
   * @brief Insere novo elemento no final da Fila.
   * 
   * @param  data    dado do tipo T a ser inserido.
-  *
-  * @see void push_front(const T& data);
  */
     void enqueue(const T& data) {
-    	linkedList_.push_back();
+    	linkedList_.push_back(data);
     }
 
  /**
-  * @brief Retira o elemento da posição definida.
+  * @brief Retira o primeiro elemento da Fila.
   * 
-  * Retira e retorna o elemento da posição dada por index
-  * e realoca todos os outros elementos uma posição a frente.
+  * Retira o primeiro elemento e realoca todos os outros elementos
+  * uma posição a frente.
   *
-  * @throws "std::out_of_range" caso a Fila esteja vazia
-  * 			ou a posição seja inválida.
+  * @throws "std::out_of_range" caso a Fila esteja vazia.
   *
-  * @param  index   (inteiro) indica a posição do dado.
-  *
-  * @return Elemento que estava na posição index.
+  * @return Elemento que estava na primeira posição da Fila.
  */
     T dequeue() {
         return linkedList_.pop_front();
     }
 
  /**
-  * @brief Retira o primeiro elemento da Fila.
+  * Olha o primeiro elemento da fila, sem retirá-lo.
   * 
-  * Retira o primeiro elemento e realoca todos os outros elementos
-  * uma posição a frente.
+  * @throws "std::out_of_range" caso a fila esteja vazia.
   *
-  * @throws "std::out_of_range" caso a Fila esteja vazia.
-  *
-  * @return Elemento que estava na primeira posição da Fila.
+  * @return Elemento que está no final da fila.
  */
     T& front() const {
         return linkedList_.at(0);
     }
 
  /**
-  * @brief Retira o primeiro elemento da Fila.
+  * Olha o elemento no final da fila, sem retirá-lo.
   * 
-  * Retira o primeiro elemento e realoca todos os outros elementos
-  * uma posição a frente.
+  * @throws "std::out_of_range" caso a fila esteja vazia.
   *
-  * @throws "std::out_of_range" caso a Fila esteja vazia.
-  *
-  * @return Elemento que estava na primeira posição da Fila.
+  * @return Elemento que está no final da fila.
  */
     T& back() const {
         return linkedList_.at(size()-1);
@@ -122,7 +110,7 @@ class LinkedQueue {
     }
 
  private:
-    LinkedList linkedList_;
+    LinkedList<T> linkedList_;
 };
 
 }  // namespace structures
