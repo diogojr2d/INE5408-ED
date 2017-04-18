@@ -283,22 +283,13 @@ class CircularList {
             push_front(data);
         } else {
             Node* anterior = head->next();
-            // PAREI AQUI PAREI AQUI PAREI AQUI PAREI AQUI 
-            // PAREI AQUI PAREI AQUI PAREI AQUI PAREI AQUI 
-            // PAREI AQUI PAREI AQUI PAREI AQUI PAREI AQUI 
-            // PAREI AQUI PAREI AQUI PAREI AQUI PAREI AQUI 
-            // PAREI AQUI PAREI AQUI PAREI AQUI PAREI AQUI 
-            // PAREI AQUI PAREI AQUI PAREI AQUI PAREI AQUI 
-            // PAREI AQUI PAREI AQUI PAREI AQUI PAREI AQUI 
-            // PAREI AQUI PAREI AQUI PAREI AQUI PAREI AQUI 
-            // PAREI AQUI PAREI AQUI PAREI AQUI PAREI AQUI 
-            // PAREI AQUI PAREI AQUI PAREI AQUI PAREI AQUI 
-            // PAREI AQUI PAREI AQUI PAREI AQUI PAREI AQUI 
             auto index = 0u;
-            while (anterior->next() != nullptr && data > anterior->data()) {
+            printf("Entrando no while do sorted.\n");
+            while (anterior->next() != head && data > anterior->data()) {
                 index++;
                 anterior = anterior->next();
             }
+            printf("Saiu no while do sorted.\n");
             if (data > anterior->data()) {
                 insert(data, index+1);
             } else {
@@ -317,7 +308,7 @@ class CircularList {
         } else if (index == 0) {
             return pop_front();
         } else {
-            Node* anterior = head;
+            Node* anterior = head->next();
             for (auto i = 0u; i < index-1; ++i) {
                 anterior = anterior->next();
             }
@@ -340,8 +331,8 @@ class CircularList {
         if (empty()) {
             throw std::out_of_range("Lista vazia");
         }
-        Node* atual = head;
-        head = head->next();
+        Node* atual = head->next();
+        head->next(atual->next());
         T requested = atual->data();
         delete atual;
         size_--;
@@ -359,7 +350,7 @@ class CircularList {
 
     template<typename T>
     std::size_t CircularList<T>::find(const T& data) const {
-        Node* anterior = head;
+        Node* anterior = head->next();
         auto index = 0u;
         while ( (index < size_) && (data != anterior->data()) ) {
             index++;
@@ -370,14 +361,14 @@ class CircularList {
 
     template<typename T>
     void CircularList<T>::clear() {
-        Node* anterior = head;
-        Node* atual = head;
-        while (atual != nullptr) {
+        Node* anterior = head->next();
+        Node* atual = head->next();
+        while (atual != head) {
             anterior = atual;
             atual = atual->next();
             delete anterior;
         }
-        head = nullptr;
+        head->next(head);
         size_ = 0u;
     }
 
@@ -403,10 +394,8 @@ class CircularList {
         }
         if (index >= size_) {
             throw std::out_of_range("Posição inválida");
-        } else if (index == 0) {
-            return head->data();
         } else {
-            Node* atual = head;
+            Node* atual = head->next();
             for (auto i = 0u; i < index; ++i) {
                 atual = atual->next();
             }
@@ -421,10 +410,8 @@ class CircularList {
         }
         if (index >= size_) {
             throw std::out_of_range("Posição inválida");
-        } else if (index == 0) {
-            return head->data();
         } else {
-            Node* atual = head;
+            Node* atual = head->next();
             for (auto i = 0u; i < index; ++i) {
                 atual = atual->next();
             }
