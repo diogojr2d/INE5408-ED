@@ -1,7 +1,7 @@
 // Copyright 2017 <Diogo Junior de Souza>
 
-#ifndef STRUCTURES_CIRCULAR_LIST_H
-#define STRUCTURES_CIRCULAR_LIST_H
+#ifndef STRUCTURES_DOUBLY_CIRCULAR_H
+#define STRUCTURES_DOUBLY_CIRCULAR_H
 
 #include <cstdint>  // std::size_t
 #include <stdexcept>  // C++ exceptions
@@ -9,7 +9,7 @@
 namespace structures {
 
 /**
- *  Estrutura de dados do tipo Lista Circular Encadeada.
+ *  Estrutura de dados do tipo Lista Circular Duplamente Encadeada.
  *
  *  Organiza os elementos em uma lista que pode ser ordenada ou não,
  *  permitindo que o usuário insira e retire elementos em qualquer posição
@@ -18,23 +18,23 @@ namespace structures {
  * @tparam  T   Tipo de dado do template.
 */
 template<typename T>
-class CircularList {
+class DoublyCircularList {
  public:
  /**
   * @brief Construtor padrão.
   * 
-  * Cria um objeto da classe CircularList.
+  * Cria um objeto da classe DoublyCircularList.
  */
-    CircularList();
+    DoublyCircularList();
 
  /**
-  * @brief Destrutor da classe CircularList.
+  * @brief Destrutor da classe DoublyCircularList.
   * 
   * Deleta o objeto e desaloca memória dos elementos.
   *
-  * @see CircularList()
+  * @see DoublyCircularList()
  */
-    ~CircularList();
+    ~DoublyCircularList();
 
  /**
   * @brief Limpa os dados da Lista.
@@ -182,11 +182,20 @@ class CircularList {
         Node() = default;
 
         explicit Node(const T& data):
-            data_{data}
+            data_{data},
+            prev_{nullptr},
+            next_{nullptr}
         {}
 
         Node(const T& data, Node* next):
             data_{data},
+            prev_{nullptr},
+            next_{next}
+        {}
+
+        Node(const T& data, Node* prev, Node* next):
+            data_{data},
+            prev_{prev},
             next_{next}
         {}
 
@@ -196,6 +205,18 @@ class CircularList {
 
         const T& data() const {  // getter const: dado
             return data_;
+        }
+
+        Node* prev() {  // getter: anterior
+        	return prev_;
+        }
+
+        const Node* prev() const {  // getter const: anterior
+        	return prev_;
+        }
+
+        void prev(Node* node) {  // setter: anterior
+        	prev_ = node;
         }
 
         Node* next() {  // getter: próximo
@@ -212,84 +233,90 @@ class CircularList {
 
      private:
         T data_;
+        Node* prev_{nullptr};
         Node* next_{nullptr};
     };
-
-    Node* end() {  // último nodo da lista
-        auto it = head->next();
-        for (auto i = 1u; i < size(); ++i) {
-            it = it->next();
-        }
-        return it;
-    }
 
     Node* head{nullptr};
     std::size_t size_{0u};
 };
 
     template<typename T>
-    CircularList<T>::CircularList():
+    DoublyCircularList<T>::DoublyCircularList():
         head{new Node{}},
         size_{0u}
     {
         head->next(head);
+        head->prev(head);
     }
 
     template<typename T>
-    CircularList<T>::~CircularList() {
+    DoublyCircularList<T>::~DoublyCircularList() {
         clear();
         delete head;
     }
 
     template<typename T>
-    void CircularList<T>::push_back(const T& data) {
-        Node* novo{new Node(data, head)};
+    void DoublyCircularList<T>::push_back(const T& data) {
+        Node* novo{new Node(data)};
         if (empty()) {
-    		head->next(novo);
-        } else {
-    		Node* last = end();
-            last->next(novo);
-        }
+            head->next(novo);
+            novo->prev(head);
+    	} else {
+        	head->prev()->next(novo);
+        	novo->prev(head->prev());
+    	}
+        novo->next(head);
+        head->prev(novo);
         size_++;
     }
 
     template<typename T>
-    void CircularList<T>::push_front(const T& data) {
-        Node* novo{ new Node{data, head->next()} };
+    void DoublyCircularList<T>::push_front(const T& data) {
+        Node* novo{new Node(data, head, head->next())};
+        if (empty()) {
+        	head->prev(novo);
+        } else {
+        	head->next()->prev(novo);
+        }
         head->next(novo);
         size_++;
     }
 
     template<typename T>
-    void CircularList<T>::insert(const T& data, std::size_t index) {
+    void DoublyCircularList<T>::insert(const T& data, std::size_t index) {
         if (index > size()) {
             throw std::out_of_range("Posição inválida");
         } else if (empty() || index == 0) {
             push_front(data);
+        } else if (index == size()) {
+        	push_back(data);
         } else {
             Node* novo{new Node(data)};
-            Node* anterior = head->next();
-            for (auto i = 0u; i < index-1; ++i) {
-                anterior = anterior->next();
+            Node* atual = head->next();
+            for (auto i = 0u; i < index; ++i) {
+                atual = atual->next();
             }
-            novo->next(anterior->next());
-            anterior->next(novo);
+            novo->next(atual);
+            novo->prev(atual->prev());
+            novo->prev()->next(novo);
+            atual->prev(novo);
             size_++;
         }
     }
 
     template<typename T>
-    void CircularList<T>::insert_sorted(const T& data) {
+    void DoublyCircularList<T>::insert_sorted(const T& data) {
         if (empty()) {
             push_front(data);
         } else {
-            Node* anterior = head->next();
+            Node* atual = head->next();
             auto index = 0u;
-            while (anterior->next() != head && data > anterior->data()) {
+            while (atual->next() != head && data > atual->data()) {
                 index++;
-                anterior = anterior->next();
+                atual = atual->next();
             }
-            if (data > anterior->data()) {
+            if (data > atual->data()) {
                 insert(data, index+1);
             } else {
                 insert(data, index);
@@ -298,7 +325,7 @@ class CircularList {
     }
 
     template<typename T>
-    T CircularList<T>::pop(std::size_t index) {
+    T DoublyCircularList<T>::pop(std::size_t index) {
         if (empty()) {
             throw std::out_of_range("Lista vazia");
         }
@@ -306,14 +333,16 @@ class CircularList {
             throw std::out_of_range("Posição inválida");
         } else if (index == 0) {
             return pop_front();
+        } else if (index == size()-1) {
+        	return pop_back();
         } else {
-            Node* anterior = head->next();
-            for (auto i = 0u; i < index-1; ++i) {
-                anterior = anterior->next();
+            Node* atual = head->next();
+            for (auto i = 0u; i < index; ++i) {
+                atual = atual->next();
             }
-            Node* atual = anterior->next();
             T requested = atual->data();
-            anterior->next(atual->next());
+            atual->prev()->next(atual->next());
+            atual->next()->prev(atual->prev());
             delete atual;
             size_--;
             return requested;
@@ -321,17 +350,18 @@ class CircularList {
     }
 
     template<typename T>
-    T CircularList<T>::pop_back() {
-        return pop(size_-1);
-    }
-
-    template<typename T>
-    T CircularList<T>::pop_front() {
+    T DoublyCircularList<T>::pop_back() {
         if (empty()) {
             throw std::out_of_range("Lista vazia");
         }
-        Node* atual = head->next();
-        head->next(atual->next());
+        Node* atual = head->prev();
+        if (size() == 1) {
+        	head->prev(head);
+        	head->next(head);
+        } else {
+        	atual->prev()->next(head);
+            head->prev(atual->prev());
+        }
         T requested = atual->data();
         delete atual;
         size_--;
@@ -339,7 +369,26 @@ class CircularList {
     }
 
     template<typename T>
-    void CircularList<T>::remove(const T& data) {
+    T DoublyCircularList<T>::pop_front() {
+        if (empty()) {
+            throw std::out_of_range("Lista vazia");
+        }
+        Node* atual = head->next();
+        if (size() == 1) {
+        	head->prev(head);
+            head->next(head);
+        } else {
+        	head->next(atual->next());
+        	atual->next()->prev(head);
+        }
+        T requested = atual->data();
+        delete atual;
+        size_--;
+        return requested;
+    }
+
+    template<typename T>
+    void DoublyCircularList<T>::remove(const T& data) {
         if (empty()) {
             throw std::out_of_range("Lista vazia");
         }
@@ -348,51 +397,52 @@ class CircularList {
     }
 
     template<typename T>
-    std::size_t CircularList<T>::find(const T& data) const {
-        Node* anterior = head->next();
+    std::size_t DoublyCircularList<T>::find(const T& data) const {
+        Node* atual = head->next();
         auto index = 0u;
-        while ( (index < size_) && (data != anterior->data()) ) {
+        while ( (index < size_) && (data != atual->data()) ) {
             index++;
-            anterior = anterior->next();
+            atual = atual->next();
         }
         return index;
     }
 
     template<typename T>
-    void CircularList<T>::clear() {
-        Node* anterior = head->next();
+    void DoublyCircularList<T>::clear() {
         Node* atual = head->next();
         while (atual->next() != head->next()) {
-            anterior = atual;
             atual = atual->next();
-            delete anterior;
+            delete atual->prev();
         }
+        head->prev(head);
         head->next(head);
         size_ = 0u;
     }
 
     template<typename T>
-    std::size_t CircularList<T>::size() const {
+    std::size_t DoublyCircularList<T>::size() const {
         return size_;
     }
 
     template<typename T>
-    bool CircularList<T>::empty() const {
+    bool DoublyCircularList<T>::empty() const {
         return (size_ == 0);
     }
 
     template<typename T>
-    bool CircularList<T>::contains(const T& data) const {
+    bool DoublyCircularList<T>::contains(const T& data) const {
         return (find(data) >= 0 && find(data) < size_);
     }
 
     template<typename T>
-    T& CircularList<T>::at(std::size_t index) {
+    T& DoublyCircularList<T>::at(std::size_t index) {
         if (empty()) {
             throw std::out_of_range("Lista vazia");
         }
         if (index >= size_) {
             throw std::out_of_range("Posição inválida");
+		} else if (index == size()-1) {
+        	return head->prev()->data();
         } else {
             Node* atual = head->next();
             for (auto i = 0u; i < index; ++i) {
@@ -403,12 +453,14 @@ class CircularList {
     }
 
     template<typename T>
-    T& CircularList<T>::at(std::size_t index) const {
+    T& DoublyCircularList<T>::at(std::size_t index) const {
         if (empty()) {
             throw std::out_of_range("Lista vazia");
         }
         if (index >= size_) {
             throw std::out_of_range("Posição inválida");
+        } else if (index == size()-1) {
+            return head->prev()->data();
         } else {
             Node* atual = head->next();
             for (auto i = 0u; i < index; ++i) {
