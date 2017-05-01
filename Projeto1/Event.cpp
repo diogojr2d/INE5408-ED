@@ -73,7 +73,7 @@ ChangeRoadwayEv::ChangeRoadwayEv(int t, Roadway& p_) :
 	Event(t), roadway(p_) {}
 
 OpenSemaphoreEv::OpenSemaphoreEv(int t, std::string m, Semaphore& s, int f) :
-	Event(t), msg(m), semaphore(s), frequency(f) {}
+	Event(t), semaphore(s), frequency(f) {}
 
 DoublyLinkedList<Event*> CreateVehicleEv::run() {
 	bool worked = true;

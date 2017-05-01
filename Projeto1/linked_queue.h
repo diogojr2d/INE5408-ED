@@ -5,7 +5,7 @@
 
 #include <cstdint>  // std::size_t
 #include <stdexcept>  // C++ exceptions
-#include "./linked_list.h"
+#include "linked_list.h"
 
 /**
  *  Estrutura de dados do tipo Fila Encadeada.
