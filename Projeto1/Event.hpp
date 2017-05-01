@@ -20,7 +20,7 @@ private:
 	int time = 0; // time the event will run
 
 public:
-	explict Event(int t); // Constructo
+	explict Event(int t); // Constructor
 	virtual ~Event() {}
 
 	/**
@@ -65,20 +65,7 @@ class RemoveVehicleEv : public Event {
 private:
 	exitRoadway& exitRoadway;
 public:
-	RemoveVehicleEv(int t, exitRoadway& exitRoadway_);
-	DoublyLinkedList<Event*> run();
-};
-
-/**
- * @brief Event to change a semaphore's state
- */
-class OpenSemaphoreEv : public Event {
-private:
-	std::string msg;
-	Semahpore& semaphore;
-	int frequency;
-public:
-	OpenSemaphoreEv(int t, std::string msg, semaphore& s, int f);
+	RemoveVehicleEv(int t, ExitRoadway& exitRoadway_);
 	DoublyLinkedList<Event*> run();
 };
 
@@ -89,7 +76,19 @@ class ChangeRoadwayEv : public Event {
 private:
 	Roadway& roadway;
 public:
-	ChangeRoadwayEv(int t, Roadway& p);
+	ChangeRoadwayEv(int t, Roadway& p_);
+	DoublyLinkedList<Event*> run();
+};
+
+/**
+ * @brief Event to change a semaphore's state
+ */
+class OpenSemaphoreEv : public Event {
+private:
+	Semaphore& semaphore;
+	int frequency;
+public:
+	OpenSemaphoreEv(int t, std::string msg, semaphore& s, int f);
 	DoublyLinkedList<Event*> run();
 };
 

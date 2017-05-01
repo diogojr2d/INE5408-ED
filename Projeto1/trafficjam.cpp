@@ -52,7 +52,7 @@ int main(int argc, char const **argv) {
 		unsigned int size = newEvents.size();
 
 		for (auto i = 0u; i < size; ++i) {
-			events.insert_sorted(newEvents[i]);
+			events.insert_sorted( newEvents.at(i) );
 		}
 	}
 

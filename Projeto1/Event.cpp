@@ -56,7 +56,7 @@ bool Event::operator<=(int i) const {
 
 Event::Event(int t) : time(t) {}
 
-std::vector<std::shared_ptr<Event>> Event::run() {
+DoublyLinkedList<Event*> Event::run() {
 	throw std::logic_error("Event::run can not be called");
 }
 
@@ -64,100 +64,80 @@ int Event::getTime() const {
 	return time;
 }
 
-void Event::print() {
-	std::cout << "Event. time: " << time << "\n";
-}
+CreateVehicleEv::CreateVehicleEv(int t, Source& source_) :
+	Event(t), source(source_) {}
 
-CreateVehicleEv::CreateVehicleEv(int t, Source& f) :
-	Event(t), Source(f) {}
+RemoveVehicleEv::RemoveVehicleEv(int t, ExitRoadway& exitRoadway_) :
+	Event(t), exitRoadway(exitRoadway_) {}
 
-RemoveVehicleEv::RemoveVehicleEv(int t, FadeOut& s) :
-	Event(t), FadeOut(s) {}
+ChangeRoadwayEv::ChangeRoadwayEv(int t, Roadway& p_) :
+	Event(t), roadway(p_) {}
 
-ChangeRoadwayEv::ChangeRoadwayEv(int t, Roadway& p) :
-	Event(t), Roadway(p) {}
+OpenSemaphoreEv::OpenSemaphoreEv(int t, std::string m, Semaphore& s, int f) :
+	Event(t), msg(m), semaphore(s), frequency(f) {}
 
-OpenSemaphoreEv::OpenSemaphoreEv(int t, std::string m, semaphore& s, int f) :
-	Event(t), msg(m), Semaphore(s), Frequency(f) {}
-
-std::vector<std::shared_ptr<Event>> CreateVehicleEv::run() {
+DoublyLinkedList<Event*> CreateVehicleEv::run() {
 	bool worked = true;
 
 	try {
-		source.criaVehicle();
+		source.createsVehicle();
 	} catch (std::runtime_error& err) {
 		worked = false;
 	}
 
-	std::vector<std::shared_ptr<Event>> newEvents;
+	DoublyLinkedList<Event*> newEvents;
 
 	if (worked) {
-		int timeProx = source.timeProximoEvent(gettime());
+		int nextEventsTime = source.nextEventsTime(getTime());
 
-		newEvents.push_back(std::make_shared<EventCriarVehicle>(timeProx, source));
+		newEvents.push_back(new CreateVehicleEv(nextEventsTime, source));
 
-		newEvents.push_back(std::make_shared<EventChegouNosemaphore>(timeProx, source));
+		newEvents.push_back(new ChangeRoadwayEv(nextEventsTime, source));
 	} else {
-		newEvents.push_back(std::make_shared<EventCriarVehicle>(gettime()+5, source));
+		newEvents.push_back(new CreateVehicleEv(getTime()+5, source));
 	}
 
 	return newEvents;
 }
 
-std::vector<std::shared_ptr<Event>> RemoveVehicleEv::run() {
-	sumidouro.retira();
+DoublyLinkedList<Event*> RemoveVehicleEv::run() {
+	exitRoadway.pop();
 
-	std::vector<std::shared_ptr<Event>> newEvents;
+	DoublyLinkedList<Event*> newEvents;
 
 	return newEvents;
 }
 
-std::vector<std::shared_ptr<Event>> ChangeRoadwayEv::run() {
-	std::vector<std::shared_ptr<Event>> newEvents;
+DoublyLinkedList<Event*> ChangeRoadwayEv::run() {
+	DoublyLinkedList<Event*> newEvents;
 
-	Roadway* saida;
+	Roadway* nextRoadway;
 
+	// Try to move vehicle, if not possible creates new event 5s later
 	try {
-		saida = &Roadway.moveVehicle();
-	} catch (semaphoreNaoEstaNadirection& err) {
-		newEvents.push_back(std::make_shared<EventChegouNosemaphore>(gettime()+5, Roadway));
+		nextRoadway = Roadway.moveVehicle();
+	} catch (semaphoreNaoEstaNadirection& err) { // Corrigir Exceção *******
+		newEvents.push_back(new ChangeRoadwayEv(getTime()+5, roadway));
 		return newEvents;
 	}
 
-	if (Sumidouro* s = dynamic_cast<Sumidouro*>(saida)) {
-		newEvents.push_back(std::make_shared<EventRemoverVehicle>(gettime()+s->timeParaPercorrer(), *s));
+	// Check if nextRoadway is an ExitRoadway
+	if (ExitRoadway* s = dynamic_cast<ExitRoadway*>(nextRoadway)) {
+		newEvents.push_back(new RemoveVehicleEv(getTime()+s->timeToTravel(), *s));
 	} else {
-		newEvents.push_back(std::make_shared<EventChegouNosemaphore>(gettime()+saida->timeParaPercorrer(), *saida));
+		newEvents.push_back(new ChangeRoadwayEv(getTime()+nextRoadway->timeToTravel(), *nextRoadway));
 	}
 
 	return newEvents;
 
 }
 
-std::vector<std::shared_ptr<Event>> OpenSemaphoreEv::run() {
-	std::cout << msg << "\n";
-
+DoublyLinkedList<Event*> OpenSemaphoreEv::run() {
 	semaphore.nextState();
 
-	std::vector<std::shared_ptr<Event>> newEvents;
+	DoublyLinkedList<Event*> newEvents;
 
-	newEvents.push_back(std::make_shared<EventAbrirsemaphore>(gettime()+frequencia, msg, semaphore, frequencia));
+	newEvents.push_back(new OpenSemaphoreEv(getTime()+frequency, msg, semaphore, frequency));
 
 	return newEvents;
-}
-
-void CreateVehicleEv::print() {
-	std::cout << "CreateVehicle\n";
-}
-
-void RemoveVehicleEv::print() {
-	std::cout << "RemoveVehicle\n";
-}
-
-void ChangeRoadwayEv::print() {
-	std::cout << "ChangeRoadway\n";
-}
-
-void OpenSemaphoreEv::print() {
-	std::cout << "OpenSemaphore: " << msg << "\n";
 }
