@@ -48,7 +48,7 @@ public:
 };
 
 /**
- * @brief Event to Create a Vehicle in a Source Lane
+ * @brief Event to Create a Vehicle in a Source Roadway
 */
 class CreateVehicleEv : public Event {
 private:
@@ -59,13 +59,13 @@ public:
 };
 
 /**
- * @brief Event to Remove a Vehicle out of an Exit Lane
+ * @brief Event to Remove a Vehicle out of an Exit Roadway
 */
 class RemoveVehicleEv : public Event {
 private:
-	ExitLane& exitLane;
+	exitRoadway& exitRoadway;
 public:
-	CreateVehicleEv(int t, Source& source_);
+	RemoveVehicleEv(int t, exitRoadway& exitRoadway_);
 	DoublyLinkedList<Event*> run();
 };
 
