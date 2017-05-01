@@ -1,7 +1,7 @@
 #ifndef Roadway_HPP
 #define Roadway_HPP
 
-#include "FilaEnc.hpp"  // arrumar
+#include "linked_queue.h"
 #include "Vehicle.hpp"
 #include "Semaphore.hpp"
 
@@ -10,64 +10,66 @@
  */
 class Roadway {
 protected:
-	semaphore& semaphore;  // Referência para o semáforo no qual essa Roadway termina
-	direction direction;  // Direção de rolamento
-	FilaEnc<Vehicle> fila;  // Queue of Vehicles           ARRUMAR
-	int size = 0, velocity = 0; // Size and velocity
-	int entraram = 0, sairam = 0;  // Vehicles que entraram e sairam na instancia atual
-	static int totalEntraram, totalSairam;  // Vehicles que entraram e sairam em
-	                                        // todas as instâncias de Roadway
+	semaphore& semaphore;
+	LinkedQueue<Vehicle> queue;
+	int size = 0, velocity = 0;
+	int in = 0, out = 0;
+	double probLeft, probRight;
+	static int totalIn, totalOut;
 
 public:
-	Roadway(semaphore& s, direction d, int size, int vel);  // Construtor da Roadway
-	void add(Vehicle c);  // Add a vehicle at the start
-	Vehicle remove();  // Removes a vehicle from the end
-	bool empty();  // Verifies if the roadway is empty
-	virtual Roadway& moveVehicle(); // Moves a vehicle to the next roadway
-	int time() const;  // Time to travel the actual roadway
-	int entered() const;  // Number of vehicles that entered the system
-	int left() const;  // Number of vehicles that left the system
-	int areIn() const;  // Number of vehicles that are inside the system
-	static int totalIn();  // Total number of vehicles that entered the system
-	static int totalOut();  // Total number of vehicles that left the system
+	Roadway(semaphore& semaphore, int size, int velocity, double probLeft, double probRight);
+	void add(Vehicle vehicle);
+	Vehicle pop();
+	bool empty();
+	virtual Roadway& moveVehicle();
+	int timeToTravel() const;
+	int entered() const;
+	int left() const;
+	int areIn() const;
+	static int totalIn();
+	static int totalOut();
 };
 
 /**
- * @brief  Classe que representa uma Fonte, Roadway que pode criar Vehicles
+ * @brief Source Roadway -- creates vehicles
  */
 class Source : public Roadway {
 private:
-	int frequenciaFixa = 0, frequenciaVariavel = 0;
-	Roadway &saidaDir, &saidaReto, &saidaEsq;
+	int fixedFrequency = 0, variableFrequency = 0;
+	Roadway &rightExit, &straightExit, &leftExit;
 
 public:
-	Source(semaphore& s, direction d, int size, int vel, int fFixa, int fVar,
-		Roadway& sDir, Roadway& sReto, Roadway& sEsq);
+	Source(semaphore& semaphore, int size, int velocity, int fixedFrequency, 
+		int variableFrequency, Roadway& rightExit, Roadway& straightExit, Roadway& leftExit,
+		double probLeft, double probRight);
 
-	void createsVehicle();  // Cria um Vehicle na Roadway atual
+	void createsVehicle();
 	virtual Roadway& moveVehicle();
-	int timeNextEvent(int time);
+	int nextEventsTime(int time);
 };
 
 /**
- * @brief Central Roadway -- neither FadeOut, neither Source
+ * @brief Central Roadway
  */
 class CentralRoadway : public Roadway {
 private:
-	Roadway &saidaDir, &saidaReto, &saidaEsq;
+	Roadway &rightExit, &straightExit, &leftExit;
 
 public:
-	CentralRoadway(semaphore& s, direction d, int size, int vel,
-		Roadway& sDir, Roadway& sReto, Roadway& sEsq);
+	CentralRoadway(semaphore& semaphore, int size, int velocity,
+		Roadway& rightExit, Roadway& straightExit, Roadway& leftExit,
+		double probLeft, double probRight);
 	virtual Roadway& moveVehicle();
 };
 
 /**
- * @brief Removes vehicles from the system.
+ * @brief Removes vehicles from the system
  */
-class FadeOut : public Roadway {
+class ExitRoadway : public Roadway {
 public:
-	FadeOut(semaphore& s, direction d, int size, int vel);
+	ExitRoadway(semaphore& semaphore, int size, int velocity, 
+		double probLeft, double probRight);
 };
 
 #endif  // Roadway_HPP

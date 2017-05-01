@@ -1,43 +1,39 @@
+// Copyright 2017
+// Diogo Junior de Souza
+// Leticia do Nascimento
+
 #include "Roadway.hpp"
-#include "Exceptions.hpp"
 #include <cstdlib>
 #include <sstream>
 
 int Roadway::totalIn = 0;
 int Roadway::totalOut = 0;
 
-Roadway::Roadway(semaphore& s, Direction d, int sz, int vel):
-	semaphore(s),
-	direction(d),
-	size(sz),
-	velocity(vel) {}
+Roadway::Roadway(semaphore& semaphore, int size, int velocity,
+		double probLeft, double probRight):
+	semaphore(semaphore),
+	size(size),
+	velocity(velocity),
+	probLeft(probLeft),
+	probRight(probRight) {}
 
-void Roadway::add(Vehicle c) {
-	if (c.getSize() > size) {
-		std::stringstream ss;
-		ss << "Roadway full: " << direction << " size: " << size
-			<< " vel: " << velocity << "\n";
-		throw std::runtime_error(ss.str());
+void Roadway::add(Vehicle v) {
+	if (v.getSize() > size) {
+		throw std::runtime_error("Roadway currently full");
 	}
 
-
-	size -= c.getSize();
-
+	size -= v.getSize();
 	++in;
 	++totalIn;
-
-	fila.inclui(c);
+	queue.enqueue(v);
 }
 
-Vehicle Roadway::retira() {
-	auto c = fila.retira();
-
-	size += c.getSize();
-
-	++out;
+Vehicle Roadway::pop() {
+	auto v = queue.dequeue();
+	size += v.getSize();
+	++left;
 	++totalOut;
-
-	return c;
+	return v;
 }
 
 bool Roadway::empty() {
@@ -48,105 +44,95 @@ Roadway& Roadway::moveVehicle() {
 	throw std::logic_error("Roadway::moveVehicle not implemented");
 }
 
-int Roadway::tempoParaPercorrer() const {
+int Roadway::timeToTravel() const {
 	return size / velocity / 3.6;
 }
 
-int Roadway::quantosEntraram() const {
-	return entraram;
+int Roadway::entered() const {
+	return in;
 }
 
-int Roadway::quantosSairam() const {
-	return sairam;
+int Roadway::left() const {
+	return left;
 }
 
-int Roadway::estaoDentro() const {
-	return entraram-sairam;
+int Roadway::areIn() const {
+	return entered-left;
 }
 
-int Roadway::totalQuantosEntraram() {
-	return totalEntraram;
+int Roadway::totalIn() {
+	return totalIn;
 }
 
-int Roadway::totalQuantosSairam() {
-	return totalSairam;
+int Roadway::totalOut() {
+	return totalOut;
 }
 
-RoadwayCentro::RoadwayCentro(semaphore& s, direction d, int size, int vel,
-		Roadway& sDir, Roadway& sReto, Roadway& sEsq):
-	Roadway(s, d, size, vel),
-	saidaDir(sDir),
-	saidaReto(sReto),
-	saidaEsq(sEsq) {}
+CentralRoadway::CentralRoadway(semaphore& s, int size, int velocity,
+		Roadway& rightExit, Roadway& straightExit, Roadway& leftExit):
+	Roadway(semaphore, size, velicity),
+	rightExit(rightExit),
+	straightExit(straightExit),
+	leftExit(leftExit) {}
 
 
-Roadway& RoadwayCentro::moveVehicle() {
-	if (semaphore.directionAtual() != direction)
-		throw semaphoreNaoEstaNadirection();
+Roadway& CentralRoadway::moveVehicle() {
+	if (!semaphore.open())
+		throw std::runtime_error("Red Semaphore");
 
-	direction dir	= semaphore.decidedirection(direction);
+	double r = (rand())/RAND_MAX;
+	auto v = pop();
 
-	auto c = retira();
-
-	if (dir == directionFunc::getDireita(direction)) {
-		saidaDir.adiciona(c);
-		return saidaDir;
-
-	} else if (dir == directionFunc::getReto(direction)) {
-		saidaReto.adiciona(c);
-		return saidaReto;
-
-	} else if (dir == directionFunc::getEsquerda(direction)) {
-		saidaEsq.adiciona(c);
-		return saidaEsq;
-
-	} else
-		throw std::logic_error("error in RoadwayCentro::moveVehicle");
+	if (r > probRight) {
+		rightExit.add(v);
+		return rightExit;
+	} else if (r < probLeft) {
+		leftExit.add(v);
+		return leftExit;
+	}  else {
+		straightExit.add(v);
+		return straightExit;
+	}
 }
 
-Fonte::Fonte(semaphore& s, direction d, int size, int vel, int fFixa, int fVar,
-	Roadway& sDir, Roadway& sReto, Roadway& sEsq):
-	Roadway(s, d, size, vel),
-	frequenciaFixa(fFixa - fVar),
-	frequenciaVariavel(2*fVar),
-	saidaDir(sDir),
-	saidaReto(sReto),
-	saidaEsq(sEsq) {}
+Source::Source(semaphore& semaphore, int size, int velocity, int fixedFrequency,
+		int variableFrequency, Roadway& rightExit, Roadway& straightExit,
+		Roadway& leftExit, double probLeft, double probRight):
+	Roadway(semaphore, size, velocity, probLeft, probRight),
+	fixedFrequency(fixedFrequency - variableFrequency),
+	variableFrequency(2*variableFrequency),
+	rightExit(rightExit),
+	straightExit(straightExit),
+	leftExit(leftExit) {}
 
-void Fonte::createVehicle() {
+void Source::createVehicle() {
 	Vehicle c;
-
-	std::cout << "Vehiclegetting in the system. size: " << c.getSize() << "\n";
-
 	add(c);
 }
 
-Roadway& Fonte::moveVehicle() {
-	if (semaphore.directionAtual() != direction)
-		throw semaphoreNaoEstaNadirection();
+Roadway& Source::moveVehicle() {
+	if (!semaphore.open())
+		throw std::runtime_error("Red Semaphore");
 
-	direction dir	= semaphore.decidedirection(direction);
+	double r = (rand())/RAND_MAX;
+	auto v = pop();
 
-	auto c = retira();
-
-	if (dir == directionFunc::getDireita(direction)) {
-		saidaDir.adiciona(c);
-		return saidaDir;
-
-	} else if (dir == directionFunc::getReto(direction)) {
-		saidaReto.adiciona(c);
-		return saidaReto;
-
-	} else if (dir == directionFunc::getEsquerda(direction)) {
-		saidaEsq.adiciona(c);
-		return saidaEsq;
-	} else
-		throw std::logic_error("error in Fonte::moveVehicle");
+	if (r > probRight) {
+		rightExit.add(v);
+		return rightExit;
+	} else if (r < probLeft) {
+		leftExit.add(v);
+		return leftExit;
+	}  else {
+		straightExit.add(v);
+		return straightExit;
+	}
 }
 
-int Fonte::timeNextEvent(int time) {
+int Source::nextEventsTime(int time) {
 	return time + fixedFrequency + variableFrequency * float(rand())/RAND_MAX;
 }
 
-FadeOut::FadeOut(semaphore& s, direction d, int size, int vel):
-	Roadway(s, d, size, vel) {}
+ExitRoadway::ExitRoadway(semaphore& semaphore, int size, int velocity,
+		double probLeft, double probRight):
+	Roadway(size, size, velocity, probLeft, probRight) {}
