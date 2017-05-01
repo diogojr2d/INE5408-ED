@@ -1,3 +1,7 @@
+// Copyright 2017
+// Diogo Junior de Souza
+// Leticia do Nascimento
+
 #include "Vehicle.hpp"
 #include <cstdlib>
 #include <iostream>
