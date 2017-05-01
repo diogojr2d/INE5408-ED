@@ -22,16 +22,16 @@ void Roadway::add(Vehicle v) {
 	}
 
 	size -= v.getSize();
-	++in;
-	++totalIn_;
+	in++;
+	totalIn_++;
 	queue.enqueue(v);
 }
 
 Vehicle Roadway::pop() {
 	auto v = queue.dequeue();
 	size += v.getSize();
-	++left;
-	++totalOut_;
+	out++;
+	totalOut_++;
 	return v;
 }
 
@@ -52,11 +52,11 @@ int Roadway::entered() const {
 }
 
 int Roadway::left() const {
-	return left;
+	return out;
 }
 
 int Roadway::areIn() const {
-	return entered-left;
+	return in-out;
 }
 
 int Roadway::totalIn() {
@@ -68,8 +68,9 @@ int Roadway::totalOut() {
 }
 
 CentralRoadway::CentralRoadway(Semaphore& semaphore, int size, int velocity,
-		Roadway& rightExit, Roadway& straightExit, Roadway& leftExit):
-	Roadway(semaphore, size, velicity),
+		double probLeft, double probRight, Roadway& rightExit, Roadway& straightExit,
+		Roadway& leftExit):
+    Roadway(semaphore, size, velocity, probLeft, probRight),
 	rightExit(rightExit),
 	straightExit(straightExit),
 	leftExit(leftExit) {}
@@ -105,8 +106,8 @@ Source::Source(Semaphore& semaphore, int size, int velocity, int fixedFrequency,
 	leftExit(leftExit) {}
 
 void Source::createVehicle() {
-	Vehicle c;
-	add(c);
+	Vehicle v;
+	add(v);
 }
 
 Roadway& Source::moveVehicle() {
@@ -134,4 +135,4 @@ int Source::nextEventsTime(int time) {
 
 ExitRoadway::ExitRoadway(Semaphore& semaphore, int size, int velocity,
 		double probLeft, double probRight):
-	Roadway(semaphore, size, size, velocity, probLeft, probRight) {}
+	Roadway(semaphore, size, velocity, probLeft, probRight) {}

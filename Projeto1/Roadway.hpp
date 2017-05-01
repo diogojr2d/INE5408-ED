@@ -44,7 +44,7 @@ public:
 		int variableFrequency, Roadway& rightExit, Roadway& straightExit, Roadway& leftExit,
 		double probLeft, double probRight);
 
-	void createsVehicle();
+	void createVehicle();
 	virtual Roadway& moveVehicle();
 	int nextEventsTime(int time);
 };
@@ -58,8 +58,8 @@ private:
 
 public:
 	CentralRoadway(Semaphore& semaphore, int size, int velocity,
-		Roadway& rightExit, Roadway& straightExit, Roadway& leftExit,
-		double probLeft, double probRight);
+		double probLeft, double probRight, Roadway& rightExit,
+		Roadway& straightExit, Roadway& leftExit);
 	virtual Roadway& moveVehicle();
 };
 

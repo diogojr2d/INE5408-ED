@@ -9,6 +9,7 @@
 #include "Roadway.hpp"
 #include "Semaphore.hpp"
 #include "Vehicle.hpp"
+#include "doubly_linked_list.h"
 
 /**
  * @brief Base class for all Events
@@ -61,7 +62,7 @@ public:
 */
 class RemoveVehicleEv : public Event {
 private:
-	exitRoadway& exitRoadway;
+	ExitRoadway& exitRoadway;
 public:
 	RemoveVehicleEv(int t, ExitRoadway& exitRoadway_);
 	DoublyLinkedList<Event*> run();
@@ -86,7 +87,7 @@ private:
 	Semaphore& semaphore;
 	int frequency;
 public:
-	OpenSemaphoreEv(int t, std::string msg, semaphore& s, int f);
+	OpenSemaphoreEv(int t, std::string msg, Semaphore& s, int f);
 	DoublyLinkedList<Event*> run();
 };
 
