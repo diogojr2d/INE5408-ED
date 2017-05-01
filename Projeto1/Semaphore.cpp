@@ -9,6 +9,6 @@ void Semaphore::nextState() {
 	nextSemaphore.nextState();
 }
 
-bool Semaphore::open() {
+bool Semaphore::getOpen() const {
 	return open;
 }

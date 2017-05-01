@@ -3,7 +3,6 @@
 // Leticia do Nascimento
 
 #include "Event.hpp"
-#include "Exceptions.hpp"
 #include <iostream>
 
 bool Event::operator>(const Event& e) const {
@@ -116,7 +115,7 @@ DoublyLinkedList<Event*> ChangeRoadwayEv::run() {
 	// Try to move vehicle, if not possible creates new event 5s later
 	try {
 		nextRoadway = Roadway.moveVehicle();
-	} catch (semaphoreNaoEstaNadirection& err) { // Corrigir Exceção *******
+	} catch (std::runtime_error& err) {
 		newEvents.push_back(new ChangeRoadwayEv(getTime()+5, roadway));
 		return newEvents;
 	}

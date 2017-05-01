@@ -7,8 +7,6 @@
 #include <stdexcept>  // C++ exceptions
 #include "./linked_list.h"
 
-namespace structures {
-
 /**
  *  Estrutura de dados do tipo Fila Encadeada.
  *
@@ -112,7 +110,5 @@ class LinkedQueue {
  private:
     LinkedList<T> linkedList_;
 };
-
-}  // namespace structures
 
 #endif

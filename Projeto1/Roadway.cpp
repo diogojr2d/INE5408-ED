@@ -4,12 +4,11 @@
 
 #include "Roadway.hpp"
 #include <cstdlib>
-#include <sstream>
 
-int Roadway::totalIn = 0;
-int Roadway::totalOut = 0;
+int Roadway::totalIn_ = 0;
+int Roadway::totalOut_ = 0;
 
-Roadway::Roadway(semaphore& semaphore, int size, int velocity,
+Roadway::Roadway(Semaphore& semaphore, int size, int velocity,
 		double probLeft, double probRight):
 	semaphore(semaphore),
 	size(size),
@@ -24,7 +23,7 @@ void Roadway::add(Vehicle v) {
 
 	size -= v.getSize();
 	++in;
-	++totalIn;
+	++totalIn_;
 	queue.enqueue(v);
 }
 
@@ -32,7 +31,7 @@ Vehicle Roadway::pop() {
 	auto v = queue.dequeue();
 	size += v.getSize();
 	++left;
-	++totalOut;
+	++totalOut_;
 	return v;
 }
 
@@ -61,14 +60,14 @@ int Roadway::areIn() const {
 }
 
 int Roadway::totalIn() {
-	return totalIn;
+	return totalIn_;
 }
 
 int Roadway::totalOut() {
-	return totalOut;
+	return totalOut_;
 }
 
-CentralRoadway::CentralRoadway(semaphore& s, int size, int velocity,
+CentralRoadway::CentralRoadway(Semaphore& semaphore, int size, int velocity,
 		Roadway& rightExit, Roadway& straightExit, Roadway& leftExit):
 	Roadway(semaphore, size, velicity),
 	rightExit(rightExit),
@@ -77,10 +76,10 @@ CentralRoadway::CentralRoadway(semaphore& s, int size, int velocity,
 
 
 Roadway& CentralRoadway::moveVehicle() {
-	if (!semaphore.open())
+	if (!semaphore.getOpen())
 		throw std::runtime_error("Red Semaphore");
 
-	double r = (rand())/RAND_MAX;
+	double r = rand()/RAND_MAX;
 	auto v = pop();
 
 	if (r > probRight) {
@@ -95,7 +94,7 @@ Roadway& CentralRoadway::moveVehicle() {
 	}
 }
 
-Source::Source(semaphore& semaphore, int size, int velocity, int fixedFrequency,
+Source::Source(Semaphore& semaphore, int size, int velocity, int fixedFrequency,
 		int variableFrequency, Roadway& rightExit, Roadway& straightExit,
 		Roadway& leftExit, double probLeft, double probRight):
 	Roadway(semaphore, size, velocity, probLeft, probRight),
@@ -111,7 +110,7 @@ void Source::createVehicle() {
 }
 
 Roadway& Source::moveVehicle() {
-	if (!semaphore.open())
+	if (!semaphore.getOpen())
 		throw std::runtime_error("Red Semaphore");
 
 	double r = (rand())/RAND_MAX;
@@ -133,6 +132,6 @@ int Source::nextEventsTime(int time) {
 	return time + fixedFrequency + variableFrequency * float(rand())/RAND_MAX;
 }
 
-ExitRoadway::ExitRoadway(semaphore& semaphore, int size, int velocity,
+ExitRoadway::ExitRoadway(Semaphore& semaphore, int size, int velocity,
 		double probLeft, double probRight):
-	Roadway(size, size, velocity, probLeft, probRight) {}
+	Roadway(semaphore, size, size, velocity, probLeft, probRight) {}

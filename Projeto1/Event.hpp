@@ -6,11 +6,9 @@
 #define EVENT_HPP
 
 #include <iostream>
-#include <memory>
 #include "Roadway.hpp"
 #include "Semaphore.hpp"
 #include "Vehicle.hpp"
-#include <vector>
 
 /**
  * @brief Base class for all Events
@@ -20,7 +18,7 @@ private:
 	int time = 0; // time the event will run
 
 public:
-	explict Event(int t); // Constructor
+	explicit Event(int t); // Constructor
 	virtual ~Event() {}
 
 	/**

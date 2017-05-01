@@ -10,15 +10,15 @@
  */
 class Roadway {
 protected:
-	semaphore& semaphore;
+	Semaphore& semaphore;
 	LinkedQueue<Vehicle> queue;
 	int size = 0, velocity = 0;
 	int in = 0, out = 0;
 	double probLeft, probRight;
-	static int totalIn, totalOut;
+	static int totalIn_, totalOut_;
 
 public:
-	Roadway(semaphore& semaphore, int size, int velocity, double probLeft, double probRight);
+	Roadway(Semaphore& semaphore, int size, int velocity, double probLeft, double probRight);
 	void add(Vehicle vehicle);
 	Vehicle pop();
 	bool empty();
@@ -40,7 +40,7 @@ private:
 	Roadway &rightExit, &straightExit, &leftExit;
 
 public:
-	Source(semaphore& semaphore, int size, int velocity, int fixedFrequency, 
+	Source(Semaphore& semaphore, int size, int velocity, int fixedFrequency, 
 		int variableFrequency, Roadway& rightExit, Roadway& straightExit, Roadway& leftExit,
 		double probLeft, double probRight);
 
@@ -57,7 +57,7 @@ private:
 	Roadway &rightExit, &straightExit, &leftExit;
 
 public:
-	CentralRoadway(semaphore& semaphore, int size, int velocity,
+	CentralRoadway(Semaphore& semaphore, int size, int velocity,
 		Roadway& rightExit, Roadway& straightExit, Roadway& leftExit,
 		double probLeft, double probRight);
 	virtual Roadway& moveVehicle();
@@ -68,7 +68,7 @@ public:
  */
 class ExitRoadway : public Roadway {
 public:
-	ExitRoadway(semaphore& semaphore, int size, int velocity, 
+	ExitRoadway(Semaphore& semaphore, int size, int velocity, 
 		double probLeft, double probRight);
 };
 

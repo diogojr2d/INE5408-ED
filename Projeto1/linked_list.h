@@ -16,23 +16,23 @@
  * @tparam  T   Tipo de dado do template.
 */
 template<typename T>
-class DoublyLinkedList {
+class LinkedList {
  public:
  /**
   * @brief Construtor padrão.
   * 
-  * Cria um objeto da classe DoublyLinkedList.
+  * Cria um objeto da classe LinkedList.
  */
-    DoublyLinkedList();
+    LinkedList();
 
  /**
-  * @brief Destrutor da classe DoublyLinkedList.
+  * @brief Destrutor da classe LinkedList.
   * 
   * Deleta o objeto e desaloca memória dos elementos.
   *
-  * @see DoublyLinkedList()
+  * @see LinkedList()
  */
-    ~DoublyLinkedList();
+    ~LinkedList();
 
  /**
   * @brief Limpa os dados da Lista.
@@ -178,20 +178,11 @@ class DoublyLinkedList {
     class Node {  // Elemento
      public:
         explicit Node(const T& data):
-            data_{data},
-            prev_{nullptr},
-            next_{nullptr}
+            data_{data}
         {}
 
         Node(const T& data, Node* next):
             data_{data},
-            prev_{nullptr},
-            next_{next}
-        {}
-
-        Node(const T& data, Node* prev, Node* next):
-            data_{data},
-            prev_{prev},
             next_{next}
         {}
 
@@ -201,18 +192,6 @@ class DoublyLinkedList {
 
         const T& data() const {  // getter const: dado
             return data_;
-        }
-
-        Node* prev() {  // getter: anterior
-        	return prev_;
-        }
-
-        const Node* prev() const {  // getter const: anterior
-        	return prev_;
-        }
-
-        void prev(Node* node) {  // setter: anterior
-        	prev_ = node;
         }
 
         Node* next() {  // getter: próximo
@@ -229,86 +208,87 @@ class DoublyLinkedList {
 
      private:
         T data_;
-        Node* prev_{nullptr};
         Node* next_{nullptr};
     };
 
+    Node* end() {  // último nodo da lista
+        auto it = head;
+        for (auto i = 1u; i < size(); ++i) {
+            it = it->next();
+        }
+        return it;
+    }
+
     Node* head{nullptr};
-    Node* tail{nullptr};
     std::size_t size_{0u};
 };
 
     template<typename T>
-    DoublyLinkedList<T>::DoublyLinkedList():
+    LinkedList<T>::LinkedList():
         head{nullptr},
-        tail{nullptr},
         size_{0u}
     {}
 
     template<typename T>
-    DoublyLinkedList<T>::~DoublyLinkedList() {
+    LinkedList<T>::~LinkedList() {
         clear();
     }
 
     template<typename T>
-    void DoublyLinkedList<T>::push_back(const T& data) {
-        Node* novo{new Node(data)};
+    void LinkedList<T>::push_back(const T& data) {
+        Node* novo{new Node(data, nullptr)};
         if (empty()) {
     		head = novo;
     	} else {
-        	tail->next(novo);
-        	novo->prev(tail);
+    		Node* last = end();
+        	last->next(novo);
     	}
-    	tail = novo;
         size_++;
     }
 
     template<typename T>
-    void DoublyLinkedList<T>::push_front(const T& data) {
-        Node* novo{new Node(data, nullptr, head)};
-        if (empty()) {
-        	tail = novo;
-        } else {
-        	head->prev(novo);
+    void LinkedList<T>::push_front(const T& data) {
+        Node* novo{new Node(data, head)};
+        if (novo == nullptr) {
+            throw std::out_of_range("Lista cheia");
         }
         head = novo;
         size_++;
     }
 
     template<typename T>
-    void DoublyLinkedList<T>::insert(const T& data, std::size_t index) {
+    void LinkedList<T>::insert(const T& data, std::size_t index) {
         if (index > size()) {
             throw std::out_of_range("Posição inválida");
         } else if (empty() || index == 0) {
             push_front(data);
-        } else if (index == size()) {
-        	push_back(data);
         } else {
             Node* novo{new Node(data)};
-            Node* atual = head;
-            for (auto i = 0u; i < index; ++i) {
-                atual = atual->next();
+            if (novo == nullptr) {
+                throw std::out_of_range("Lista cheia");
             }
-            novo->next(atual);
-            novo->prev(atual->prev());
-            novo->prev()->next(novo);
-            atual->prev(novo);
+            Node* anterior = head;
+            for (auto i = 0u; i < index-1; ++i) {
+                anterior = anterior->next();
+            }
+            novo->next(anterior->next());
+            anterior->next(novo);
             size_++;
         }
     }
 
     template<typename T>
-    void DoublyLinkedList<T>::insert_sorted(const T& data) {
+    void LinkedList<T>::insert_sorted(const T& data) {
         if (empty()) {
             push_front(data);
         } else {
-            Node* atual = head;
+            Node* anterior = head;
             auto index = 0u;
-            while (atual->next() != nullptr && data > atual->data()) {
+            while (anterior->next() != nullptr && data > anterior->data()) {
                 index++;
-                atual = atual->next();
+                anterior = anterior->next();
             }
-            if (data > atual->data()) {
+            if (data > anterior->data()) {
                 insert(data, index+1);
             } else {
                 insert(data, index);
@@ -317,7 +297,7 @@ class DoublyLinkedList {
     }
 
     template<typename T>
-    T DoublyLinkedList<T>::pop(std::size_t index) {
+    T LinkedList<T>::pop(std::size_t index) {
         if (empty()) {
             throw std::out_of_range("Lista vazia");
         }
@@ -325,16 +305,14 @@ class DoublyLinkedList {
             throw std::out_of_range("Posição inválida");
         } else if (index == 0) {
             return pop_front();
-        } else if (index == size()-1) {
-        	return pop_back();
         } else {
-            Node* atual = head;
-            for (auto i = 0u; i < index; ++i) {
-                atual = atual->next();
+            Node* anterior = head;
+            for (auto i = 0u; i < index-1; ++i) {
+                anterior = anterior->next();
             }
+            Node* atual = anterior->next();
             T requested = atual->data();
-            atual->prev()->next(atual->next());
-            atual->next()->prev(atual->prev());
+            anterior->next(atual->next());
             delete atual;
             size_--;
             return requested;
@@ -342,37 +320,17 @@ class DoublyLinkedList {
     }
 
     template<typename T>
-    T DoublyLinkedList<T>::pop_back() {
-        if (empty()) {
-            throw std::out_of_range("Lista vazia");
-        }
-        Node* atual = tail;
-        if (size() == 1) {
-        	tail = nullptr;
-        	head = nullptr;
-        } else {
-        	tail = tail->prev();
-        	tail->next(nullptr);
-        }
-        T requested = atual->data();
-        delete atual;
-        size_--;
-        return requested;
+    T LinkedList<T>::pop_back() {
+        return pop(size_-1);
     }
 
     template<typename T>
-    T DoublyLinkedList<T>::pop_front() {
+    T LinkedList<T>::pop_front() {
         if (empty()) {
             throw std::out_of_range("Lista vazia");
         }
         Node* atual = head;
-        if (size() == 1) {
-        	head = nullptr;
-        	tail = nullptr;
-        } else {
-        	head = head->next();
-        	head->prev(nullptr);
-        }
+        head = head->next();
         T requested = atual->data();
         delete atual;
         size_--;
@@ -380,7 +338,7 @@ class DoublyLinkedList {
     }
 
     template<typename T>
-    void DoublyLinkedList<T>::remove(const T& data) {
+    void LinkedList<T>::remove(const T& data) {
         if (empty()) {
             throw std::out_of_range("Lista vazia");
         }
@@ -389,48 +347,46 @@ class DoublyLinkedList {
     }
 
     template<typename T>
-    std::size_t DoublyLinkedList<T>::find(const T& data) const {
-        Node* atual = head;
+    std::size_t LinkedList<T>::find(const T& data) const {
+        Node* anterior = head;
         auto index = 0u;
-        while ( (index < size_) && (data != atual->data()) ) {
+        while ( (index < size_) && (data != anterior->data()) ) {
             index++;
-            atual = atual->next();
+            anterior = anterior->next();
         }
         return index;
     }
 
     template<typename T>
-    void DoublyLinkedList<T>::clear() {
+    void LinkedList<T>::clear() {
+        Node* anterior = head;
         Node* atual = head;
-        while (atual != nullptr && atual->next() != nullptr) {
+        while (atual != nullptr) {
+            anterior = atual;
             atual = atual->next();
-            delete atual->prev();
-        }
-        if (atual != nullptr) {
-        	delete atual;
+            delete anterior;
         }
         head = nullptr;
-        tail = nullptr;
         size_ = 0u;
     }
 
     template<typename T>
-    std::size_t DoublyLinkedList<T>::size() const {
+    std::size_t LinkedList<T>::size() const {
         return size_;
     }
 
     template<typename T>
-    bool DoublyLinkedList<T>::empty() const {
+    bool LinkedList<T>::empty() const {
         return (size_ == 0);
     }
 
     template<typename T>
-    bool DoublyLinkedList<T>::contains(const T& data) const {
+    bool LinkedList<T>::contains(const T& data) const {
         return (find(data) >= 0 && find(data) < size_);
     }
 
     template<typename T>
-    T& DoublyLinkedList<T>::at(std::size_t index) {
+    T& LinkedList<T>::at(std::size_t index) {
         if (empty()) {
             throw std::out_of_range("Lista vazia");
         }
@@ -438,8 +394,6 @@ class DoublyLinkedList {
             throw std::out_of_range("Posição inválida");
         } else if (index == 0) {
             return head->data();
-		} else if (index == size()-1) {
-        	return tail->data();
         } else {
             Node* atual = head;
             for (auto i = 0u; i < index; ++i) {
@@ -450,7 +404,7 @@ class DoublyLinkedList {
     }
 
     template<typename T>
-    T& DoublyLinkedList<T>::at(std::size_t index) const {
+    T& LinkedList<T>::at(std::size_t index) const {
         if (empty()) {
             throw std::out_of_range("Lista vazia");
         }
@@ -458,8 +412,6 @@ class DoublyLinkedList {
             throw std::out_of_range("Posição inválida");
         } else if (index == 0) {
             return head->data();
-		} else if (index == size()-1) {
-        	return tail->data();
         } else {
             Node* atual = head;
             for (auto i = 0u; i < index; ++i) {

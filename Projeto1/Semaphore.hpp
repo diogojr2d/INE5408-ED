@@ -9,7 +9,7 @@ private:
 public:
 	Semaphore();
 	void nextState();
-	bool open() const;
-}
+	bool getOpen() const;
+};
 
 #endif // SEMAPHORE_HPP
