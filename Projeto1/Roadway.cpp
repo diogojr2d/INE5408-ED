@@ -68,8 +68,8 @@ int Roadway::totalOut() {
 }
 
 CentralRoadway::CentralRoadway(Semaphore& semaphore, int size, int velocity,
-		double probLeft, double probRight, Roadway& rightExit, Roadway& straightExit,
-		Roadway& leftExit):
+		Roadway& rightExit, Roadway& straightExit, Roadway& leftExit,
+		double probLeft, double probRight):
     Roadway(semaphore, size, velocity, probLeft, probRight),
 	rightExit(rightExit),
 	straightExit(straightExit),
@@ -133,6 +133,5 @@ int Source::nextEventsTime(int time) {
 	return time + fixedFrequency + variableFrequency * float(rand())/RAND_MAX;
 }
 
-ExitRoadway::ExitRoadway(Semaphore& semaphore, int size, int velocity,
-		double probLeft, double probRight):
-	Roadway(semaphore, size, velocity, probLeft, probRight) {}
+ExitRoadway::ExitRoadway(Semaphore& semaphore, int size, int velocity):
+	Roadway(semaphore, size, velocity, 0, 0) {}

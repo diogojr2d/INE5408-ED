@@ -58,8 +58,8 @@ private:
 
 public:
 	CentralRoadway(Semaphore& semaphore, int size, int velocity,
-		double probLeft, double probRight, Roadway& rightExit,
-		Roadway& straightExit, Roadway& leftExit);
+		Roadway& rightExit, Roadway& straightExit, Roadway& leftExit,
+		double probLeft, double probRight);
 	virtual Roadway& moveVehicle();
 };
 
@@ -68,8 +68,7 @@ public:
  */
 class ExitRoadway : public Roadway {
 public:
-	ExitRoadway(Semaphore& semaphore, int size, int velocity, 
-		double probLeft, double probRight);
+	ExitRoadway(Semaphore& semaphore, int size, int velocity);
 };
 
 #endif  // Roadway_HPP

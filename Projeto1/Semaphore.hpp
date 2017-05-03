@@ -8,7 +8,8 @@ private:
 
 public:
 	Semaphore();
-	explicit Semaphore(bool open_);
+	Semaphore(bool open_);
+	~Semaphore();
 	void nextState();
 	bool getOpen() const;
 	void setNext(Semaphore* s_);

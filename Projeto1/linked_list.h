@@ -1,7 +1,7 @@
 // Copyright 2017 <Diogo Junior de Souza>
 
-#ifndef STRUCTURES_DOUBLY_LIST_H
-#define STRUCTURES_DOUBLY_LIST_H
+#ifndef STRUCTURES_LINKED_LIST_H
+#define STRUCTURES_LINKED_LIST_H
 
 #include <cstdint>  // std::size_t
 #include <stdexcept>  // C++ exceptions

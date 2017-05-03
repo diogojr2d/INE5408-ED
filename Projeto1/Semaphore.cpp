@@ -5,14 +5,20 @@ Semaphore::Semaphore():
 	nextSemaphore{nullptr}
 	{}
 
-explicit Semaphore::Semaphore(bool open_):
+Semaphore::Semaphore(bool open_):
 	open{open_},
 	nextSemaphore{nullptr}
 	{}
 
+Semaphore::~Semaphore() {
+	if (nextSemaphore != nullptr) {
+		delete nextSemaphore;
+	}
+}
+
 void Semaphore::nextState() {
 	open = !open;
-	nextSemaphore.nextState();
+	nextSemaphore->open = !(nextSemaphore->open);
 }
 
 bool Semaphore::getOpen() const {

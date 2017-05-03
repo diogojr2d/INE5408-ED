@@ -63,23 +63,43 @@ int Event::getTime() const {
 	return time;
 }
 
+void Event::print() {
+	printf("Evento Geral.\n");
+}
+
 CreateVehicleEv::CreateVehicleEv(int t, Source& source_) :
 	Event(t), source(source_) {}
+	
+void CreateVehicleEv::print() {
+	printf("CreateVehicleEv (%d s).\n", getTime());
+}
 
 RemoveVehicleEv::RemoveVehicleEv(int t, ExitRoadway& exitRoadway_) :
 	Event(t), exitRoadway(exitRoadway_) {}
 
+void RemoveVehicleEv::print() {
+	printf("RemoveVehicleEv (%d s).\n", getTime());
+}
+
 ChangeRoadwayEv::ChangeRoadwayEv(int t, Roadway& p_) :
 	Event(t), roadway(p_) {}
 
-OpenSemaphoreEv::OpenSemaphoreEv(int t, std::string m, Semaphore& s, int f) :
+void ChangeRoadwayEv::print() {
+	printf("ChangeRoadwayEv (%d s).\n", getTime());
+}
+
+OpenSemaphoreEv::OpenSemaphoreEv(int t, Semaphore& s, int f) :
 	Event(t), semaphore(s), frequency(f) {}
+
+void OpenSemaphoreEv::print() {
+	printf("OpenSemaphoreEv (%d s).\n", getTime());
+}
 
 DoublyLinkedList<Event*> CreateVehicleEv::run() {
 	bool worked = true;
 
 	try {
-		source.createsVehicle();
+		source.createVehicle();
 	} catch (std::runtime_error& err) {
 		worked = false;
 	}
@@ -91,7 +111,7 @@ DoublyLinkedList<Event*> CreateVehicleEv::run() {
 
 		newEvents.push_back(new CreateVehicleEv(nextEventsTime, source));
 
-		newEvents.push_back(new ChangeRoadwayEv(nextEventsTime, source));
+		newEvents.push_back(new ChangeRoadwayEv(nextEventsTime+1, source));
 	} else {
 		newEvents.push_back(new CreateVehicleEv(getTime()+5, source));
 	}
@@ -114,7 +134,7 @@ DoublyLinkedList<Event*> ChangeRoadwayEv::run() {
 
 	// Try to move vehicle, if not possible creates new event 5s later
 	try {
-		nextRoadway = Roadway.moveVehicle();
+		nextRoadway = &(roadway.moveVehicle());
 	} catch (std::runtime_error& err) {
 		newEvents.push_back(new ChangeRoadwayEv(getTime()+5, roadway));
 		return newEvents;
@@ -136,7 +156,7 @@ DoublyLinkedList<Event*> OpenSemaphoreEv::run() {
 
 	DoublyLinkedList<Event*> newEvents;
 
-	newEvents.push_back(new OpenSemaphoreEv(getTime()+frequency, msg, semaphore, frequency));
+	newEvents.push_back(new OpenSemaphoreEv(getTime()+frequency, semaphore, frequency));
 
 	return newEvents;
 }

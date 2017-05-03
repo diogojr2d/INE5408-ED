@@ -21,6 +21,7 @@ private:
 public:
 	explicit Event(int t); // Constructor
 	virtual ~Event() {}
+	virtual void print();
 
 	/**
 	 * @brief Run Event
@@ -55,6 +56,7 @@ private:
 public:
 	CreateVehicleEv(int t, Source& source_);
 	DoublyLinkedList<Event*> run();
+	void print();
 };
 
 /**
@@ -66,6 +68,7 @@ private:
 public:
 	RemoveVehicleEv(int t, ExitRoadway& exitRoadway_);
 	DoublyLinkedList<Event*> run();
+	void print();
 };
 
 /**
@@ -77,6 +80,7 @@ private:
 public:
 	ChangeRoadwayEv(int t, Roadway& p_);
 	DoublyLinkedList<Event*> run();
+	void print();
 };
 
 /**
@@ -87,8 +91,9 @@ private:
 	Semaphore& semaphore;
 	int frequency;
 public:
-	OpenSemaphoreEv(int t, std::string msg, Semaphore& s, int f);
+	OpenSemaphoreEv(int t, Semaphore& s, int f);
 	DoublyLinkedList<Event*> run();
+	void print();
 };
 
 #endif // EVENT_HPP

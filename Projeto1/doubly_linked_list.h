@@ -174,6 +174,8 @@ class DoublyLinkedList {
  */
     T& at(std::size_t index) const;
 
+    void printAll();
+
  private:
     class Node {  // Elemento
      public:
@@ -254,12 +256,12 @@ class DoublyLinkedList {
     void DoublyLinkedList<T>::push_back(const T& data) {
         Node* novo{new Node(data)};
         if (empty()) {
-    		head = novo;
-    	} else {
-        	tail->next(novo);
-        	novo->prev(tail);
-    	}
-    	tail = novo;
+    		    head = novo;
+        } else {
+            tail->next(novo);
+            novo->prev(tail);
+        }
+        tail = novo;
         size_++;
     }
 
@@ -466,6 +468,18 @@ class DoublyLinkedList {
                 atual = atual->next();
             }
             return atual->data();
+        }
+    }
+
+    template<typename T>
+    void DoublyLinkedList<T>::printAll() {
+        Node* atual = head;
+        auto index = 0u;
+        while (atual != nullptr) {
+            printf("i: %d - data: ", index);
+            atual->data()->print();
+            index++;
+            atual = atual->next();
         }
     }
 
