@@ -10,12 +10,6 @@ Semaphore::Semaphore(bool open_):
 	nextSemaphore{nullptr}
 	{}
 
-Semaphore::~Semaphore() {
-	if (nextSemaphore != nullptr) {
-		delete nextSemaphore;
-	}
-}
-
 void Semaphore::nextState() {
 	open = !open;
 	nextSemaphore->open = !(nextSemaphore->open);

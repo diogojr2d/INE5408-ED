@@ -306,15 +306,15 @@ class DoublyLinkedList {
         } else {
             Node* atual = head;
             auto index = 0u;
-            while (atual->next() != nullptr && data > atual->data()) {
+            while (index < size_ && *data > *atual->data()) {
                 index++;
                 atual = atual->next();
             }
-            if (data > atual->data()) {
+            /*if (data > atual->data()) {
                 insert(data, index+1);
-            } else {
-                insert(data, index);
-            }
+            } else {*/
+            insert(data, index);
+            //}
         }
     }
 

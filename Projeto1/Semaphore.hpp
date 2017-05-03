@@ -9,7 +9,6 @@ private:
 public:
 	Semaphore();
 	Semaphore(bool open_);
-	~Semaphore();
 	void nextState();
 	bool getOpen() const;
 	void setNext(Semaphore* s_);

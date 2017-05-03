@@ -83,30 +83,37 @@ int main(int argc, char const *argv[]) {
 	
 	events.insert_sorted( new CreateVehicleEv(0, W1east) );
 
-	events.insert_sorted(new OpenSemaphoreEv(semaphFrequency, *S1w, semaphFrequency) );
+	events.insert_sorted( new OpenSemaphoreEv(semaphFrequency, *S1w, semaphFrequency) );
 	
 	// Main loop of events
 	int currentTime = 0;
-	printf("Vai entrar no loop.\n");
-	while ( (currentTime < totalTime) && !(events.empty()) ) {
-		printf("Começou evento: ");
+	//printf("Vai entrar no loop.\n");
+	while ( (currentTime <= totalTime) && !(events.empty()) ) {
+		//printf("Começou evento: ");
 		auto currentEvent = events.pop_front();
-		currentEvent->print();
+		//currentEvent->print();
 		currentTime = currentEvent->getTime();
-		printf("currentTime: %d\n", currentTime);
+		//printf("currentTime: %d\n", currentTime);
 
 		auto newEvents = currentEvent->run();
 		unsigned int size = newEvents.size();
-		printf("newEvents size: %d\n", size);
+		//printf("newEvents size: %d\n", size);
 
 		for (auto i = 0u; i < size; ++i) {
 			events.insert_sorted( newEvents.at(i) );
-			//printf("Inseriu em events.\n");
 		}
-		printf("Lista de eventos atual:\n");
-		events.printAll();
+		//printf("Lista de eventos atual:\n");
+		//events.printAll();
 	}
-	printf("Saiu do loop.\n");
+	//printf("Saiu do loop.\n");
+
+	// Print output
+	std::cout << "--------------------\n"
+	<< "   RELATÓRIO FINAL\n"
+	<< "Entraram: " << Roadway::totalIn()
+	<< "\nSaíram: " << Roadway::totalOut()
+	<< "\nPermanecem dentro: " << (Roadway::totalIn() - Roadway::totalOut())
+	<< "\n--------------------\n" << std::endl;
  
 	// Delete all objects
 	delete S1w;
