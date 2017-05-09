@@ -78,7 +78,6 @@ int main(int argc, char const *argv[]) {
 	Source E2west(*S2e, 400, 30, 10, 2, N2north, C1west, S2south, 0.3, 0.7);
 	Source N2south(*S2n, 500, 40, 20, 5, C1west, S2south, E2east, 0.3, 0.7);
 	Source S2north(*S2s, 500, 40, 60, 15, E2east, N2north, C1west, 0.3, 0.7);
-
 	// Initial events
 	
 	events.insert_sorted( new CreateVehicleEv(0, W1east) );
@@ -124,6 +123,86 @@ int main(int argc, char const *argv[]) {
 	delete S2s;
 	delete S2e;
 	delete S2n;
+
+		std::cout << "Relatório:\n" <<
+
+	"\nFontes do Semáforo 1\n" <<
+
+	"N1sul { Entraram: "   << N1south.entered() <<
+	" Sairam: " 		   << N1south.left() <<
+	" Estão dentro: " 	   << N1south.areIn() << " }\n"
+
+	"O1leste { Entraram: " << W1east.entered() <<
+	" Sairam: " 		   << W1east.left() <<
+	" Estão dentro: " 	   << W1east.areIn() << " }\n"
+
+	"S1n { Entraram: " 	   << S1north.entered() <<
+	" Sairam: " 		   << S1north.left() <<
+	" Estão dentro: " 	   << S1north.areIn() << " }\n"
+
+
+	"\nFontes do Semáforo 2\n" <<
+
+	"N2sul { Entraram: "   << N2south.entered() <<
+	" Sairam: " 		   << N2south.left() <<
+	" Estão dentro: " 	   << N2south.areIn() << " }\n"
+
+	"L1oeste { Entraram: " << E2west.entered() <<
+	" Sairam: " 		   << E2west.left() <<
+	" Estão dentro: " 	   << E2west.areIn() << " }\n"
+
+	"S2norte { Entraram: " << S2north.entered() <<
+	" Sairam: " 		   << S2north.left() <<
+	" Estão dentro: " 	   << S2north.areIn() << " }\n"
+
+
+	"\nPistas centrais\n"  <<
+
+	"C1oeste { Entraram: " << C1west.entered() <<
+	" Sairam: " 		   << C1west.left() <<
+	" Estão dentro: " 	   << C1west.areIn() << " }\n"
+
+	"C1leste { Entraram: " << C1east.entered() <<
+	" Sairam: " 		   << C1east.left() <<
+	" Estão dentro: " 	   << C1east.areIn() << " }\n"
+
+
+	"\nSumidouros do Semáforo 1\n" <<
+
+	"O1oeste { Entraram: " << W1west.entered() <<
+	" Sairam: " 		   << W1west.left() <<
+	" Estão dentro: " 	   << W1west.areIn() << " }\n"
+
+	"N1norte { Entraram: " << N1north.entered() <<
+	" Sairam: " 		   << N1north.left() <<
+	" Estão dentro: " 	   << N1north.areIn() << " }\n"
+
+	"S1s { Entraram: "     << S1south.entered() <<
+	" Sairam: " 		   << S1south.left() <<
+	" Estão dentro: " 	   << S1south.areIn() << " }\n"
+
+
+	"\nSumidouros do Semáforo 2\n" <<
+
+	"N2norte { Entraram: " << N2north.entered() <<
+	" Sairam: " 		   << N2north.left() <<
+	" Estão dentro: " 	   << N2north.areIn() << " }\n"
+
+	"L1leste { Entraram: " << E2east.entered() <<
+	" Sairam: " 		   << E2east.left() <<
+	" Estão dentro: " 	   << E2east.areIn() << " }\n"
+
+	"S2sul { Entraram: "   << S2south.entered() <<
+	" Sairam: " 		   << S2south.left() <<
+	" Estão dentro: " 	   << S2south.areIn() << " }\n\n"
+
+
+	"Total { Entraram: " << Roadway::totalIn() <<
+	" Sairam: " 		 << Roadway::totalOut() <<
+	" Estão dentro: "
+	<< Roadway::totalIn() - Roadway::totalOut() << " }\n"
+
+	<< std::endl;
 
 	std::cout << "Fim do programa.\n";
 
