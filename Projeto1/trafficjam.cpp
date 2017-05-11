@@ -21,7 +21,6 @@ int main(int argc, char const *argv[]) {
 	if (argc != 3) {
 		std::string totalTime_;
 		std::string semaphFrequency_;
-		std::cout << "Parâmetros incorretos." << std::endl;
 		std::cout << "Digite o Tempo Total de Simulação: ";
 		std::cin >> totalTime_;
 		std::cout << "Digite a Frequencia do Semaforo: ";
@@ -81,8 +80,14 @@ int main(int argc, char const *argv[]) {
 	// Initial events
 	
 	events.insert_sorted( new CreateVehicleEv(0, W1east) );
+	events.insert_sorted( new CreateVehicleEv(0, N1south) );
+	events.insert_sorted( new CreateVehicleEv(0, S1north) );
+	events.insert_sorted( new CreateVehicleEv(0, E2west) );
+	events.insert_sorted( new CreateVehicleEv(0, N2south) );
+	events.insert_sorted( new CreateVehicleEv(0, S2north) );
 
 	events.insert_sorted( new OpenSemaphoreEv(semaphFrequency, *S1w, semaphFrequency) );
+	events.insert_sorted( new OpenSemaphoreEv(semaphFrequency, *S2w, semaphFrequency) );
 	
 	// Main loop of events
 	int currentTime = 0;
@@ -90,8 +95,9 @@ int main(int argc, char const *argv[]) {
 	while ( (currentTime <= totalTime) && !(events.empty()) ) {
 		//printf("Começou evento: ");
 		auto currentEvent = events.pop_front();
-		//currentEvent->print();
+
 		currentTime = currentEvent->getTime();
+		//currentEvent->print();
 		//printf("currentTime: %d\n", currentTime);
 
 		auto newEvents = currentEvent->run();
@@ -102,7 +108,7 @@ int main(int argc, char const *argv[]) {
 			events.insert_sorted( newEvents.at(i) );
 		}
 		//printf("Lista de eventos atual:\n");
-		//events.printAll();
+		//events.printAll();		
 	}
 	//printf("Saiu do loop.\n");
 

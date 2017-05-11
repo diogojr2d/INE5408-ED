@@ -111,7 +111,7 @@ DoublyLinkedList<Event*> CreateVehicleEv::run() {
 
 		newEvents.push_back(new CreateVehicleEv(nextEventsTime, source));
 
-		newEvents.push_back(new ChangeRoadwayEv(nextEventsTime+1, source));
+		newEvents.push_back(new ChangeRoadwayEv(nextEventsTime+source.timeToTravel(), source));
 	} else {
 		newEvents.push_back(new CreateVehicleEv(getTime()+5, source));
 	}
@@ -136,7 +136,7 @@ DoublyLinkedList<Event*> ChangeRoadwayEv::run() {
 	try {
 		nextRoadway = &(roadway.moveVehicle());
 	} catch (std::runtime_error& err) {
-		newEvents.push_back(new ChangeRoadwayEv(getTime()+5, roadway));
+		//newEvents.push_back(new ChangeRoadwayEv(getTime()+5, roadway));
 		return newEvents;
 	}
 

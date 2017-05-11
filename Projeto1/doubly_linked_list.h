@@ -321,7 +321,7 @@ class DoublyLinkedList {
     template<typename T>
     T DoublyLinkedList<T>::pop(std::size_t index) {
         if (empty()) {
-            throw std::out_of_range("Lista vazia");
+            throw std::out_of_range("Lista vazia pop");
         }
         if (index >= size_) {
             throw std::out_of_range("Posição inválida");
@@ -346,7 +346,7 @@ class DoublyLinkedList {
     template<typename T>
     T DoublyLinkedList<T>::pop_back() {
         if (empty()) {
-            throw std::out_of_range("Lista vazia");
+            throw std::out_of_range("Lista vazia popback");
         }
         Node* atual = tail;
         if (size() == 1) {
@@ -365,7 +365,7 @@ class DoublyLinkedList {
     template<typename T>
     T DoublyLinkedList<T>::pop_front() {
         if (empty()) {
-            throw std::out_of_range("Lista vazia");
+            throw std::out_of_range("Lista vazia popfront");
         }
         Node* atual = head;
         if (size() == 1) {
@@ -384,7 +384,7 @@ class DoublyLinkedList {
     template<typename T>
     void DoublyLinkedList<T>::remove(const T& data) {
         if (empty()) {
-            throw std::out_of_range("Lista vazia");
+            throw std::out_of_range("Lista vazia remove");
         }
         if (contains(data))
         	pop(find(data));
@@ -434,7 +434,7 @@ class DoublyLinkedList {
     template<typename T>
     T& DoublyLinkedList<T>::at(std::size_t index) {
         if (empty()) {
-            throw std::out_of_range("Lista vazia");
+            throw std::out_of_range("Lista vazia at");
         }
         if (index >= size_) {
             throw std::out_of_range("Posição inválida");
@@ -454,7 +454,7 @@ class DoublyLinkedList {
     template<typename T>
     T& DoublyLinkedList<T>::at(std::size_t index) const {
         if (empty()) {
-            throw std::out_of_range("Lista vazia");
+            throw std::out_of_range("Lista vazia atconst");
         }
         if (index >= size_) {
             throw std::out_of_range("Posição inválida");

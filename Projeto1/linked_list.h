@@ -299,7 +299,7 @@ class LinkedList {
     template<typename T>
     T LinkedList<T>::pop(std::size_t index) {
         if (empty()) {
-            throw std::out_of_range("Lista vazia");
+            throw std::out_of_range("Lista vazia popLL");
         }
         if (index >= size_) {
             throw std::out_of_range("Posição inválida");
@@ -327,7 +327,7 @@ class LinkedList {
     template<typename T>
     T LinkedList<T>::pop_front() {
         if (empty()) {
-            throw std::out_of_range("Lista vazia");
+            throw std::out_of_range("Lista vazia popfrontLL");
         }
         Node* atual = head;
         head = head->next();
@@ -340,7 +340,7 @@ class LinkedList {
     template<typename T>
     void LinkedList<T>::remove(const T& data) {
         if (empty()) {
-            throw std::out_of_range("Lista vazia");
+            throw std::out_of_range("Lista vazia removeLL");
         }
         if (contains(data))
         	pop(find(data));
@@ -388,7 +388,7 @@ class LinkedList {
     template<typename T>
     T& LinkedList<T>::at(std::size_t index) {
         if (empty()) {
-            throw std::out_of_range("Lista vazia");
+            throw std::out_of_range("Lista vazia atLL");
         }
         if (index >= size_) {
             throw std::out_of_range("Posição inválida");
@@ -406,7 +406,7 @@ class LinkedList {
     template<typename T>
     T& LinkedList<T>::at(std::size_t index) const {
         if (empty()) {
-            throw std::out_of_range("Lista vazia");
+            throw std::out_of_range("Lista vazia atconst LL");
         }
         if (index >= size_) {
             throw std::out_of_range("Posição inválida");
