@@ -91,9 +91,7 @@ int main(int argc, char const *argv[]) {
 	
 	// Main loop of events
 	int currentTime = 0;
-	//printf("Vai entrar no loop.\n");
 	while ( (currentTime <= totalTime) && !(events.empty()) ) {
-		//printf("Começou evento: ");
 		auto currentEvent = events.pop_front();
 
 		currentTime = currentEvent->getTime();
@@ -130,7 +128,7 @@ int main(int argc, char const *argv[]) {
 	delete S2e;
 	delete S2n;
 
-		std::cout << "Relatório:\n" <<
+{	/*std::cout << "Relatório:\n" <<
 
 	"\nFontes do Semáforo 1\n" <<
 
@@ -203,13 +201,13 @@ int main(int argc, char const *argv[]) {
 	" Estão dentro: " 	   << S2south.areIn() << " }\n\n"
 
 
-	"Total { Entraram: " << Roadway::totalIn() <<
+	"Entraram: " << Roadway::totalIn() <<
 	" Sairam: " 		 << Roadway::totalOut() <<
 	" Estão dentro: "
 	<< Roadway::totalIn() - Roadway::totalOut() << " }\n"
 
 	<< std::endl;
-
+*/}
 	std::cout << "Fim do programa.\n";
 
 	return 0;
